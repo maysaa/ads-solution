@@ -166,6 +166,7 @@ type
     Timer1: TTimer;
     MyHtmlParser: TDIHtmlParser;
     IdHTTP1: TIdHTTP;
+    AdvertCardParser: TDIHtmlParser;
     procedure ButtonAutopliusClick(Sender: TObject);
     procedure ButtonAutogidasClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -192,6 +193,7 @@ var
   LoadAdvertisementsForm: TLoadAdvertisementsForm;
 function ParseAutopliusAdvert(webpage: string; var masina: Adv_record): boolean;
 function ParseAutogidasAdvert(webpage: string; var masina: Adv_record): boolean;
+function ParseAutogidasAdvertExt(webpage: string; var masina: Adv_record): boolean;
 function ParseMobileAdvert(webpage: string; var masina: Adv_record): boolean;
 function ParseBRCAdvert(webpage: string; var masina: Adv_record): boolean;
 function AdvertExists(tipas: integer; webpage: string): boolean;
@@ -457,8 +459,7 @@ begin
       while pos('document.write(', rawHTM) < pos('Telefonas pasiteirauti:</th><td><strong>', rawHTM) do
       begin
         Delete(rawHTM, 1, pos('document.write(', rawHTM) - 1);
-        temp := Copy(rawHTM, pos('document.write(', rawHTM) + 15, pos(';', rawHTM) - pos('document.write(',
-          rawHTM) - 16);
+        temp := Copy(rawHTM, pos('document.write(', rawHTM) + 15, pos(';', rawHTM) - pos('document.write(', rawHTM) - 16);
         fillchar(variablesorder, sizeOf(variablesorder), 0);
         vardascount := 1;
         while length(temp) > 0 do
@@ -531,8 +532,7 @@ begin
       while (pos('document.write(', rawHTM) < pos('</script', rawHTM)) do
       begin
         Delete(rawHTM, 1, pos('document.write(', rawHTM) - 1);
-        temp := Copy(rawHTM, pos('document.write(', rawHTM) + 15, pos(';', rawHTM) - pos('document.write(',
-          rawHTM) - 16);
+        temp := Copy(rawHTM, pos('document.write(', rawHTM) + 15, pos(';', rawHTM) - pos('document.write(', rawHTM) - 16);
         fillchar(variablesorder, sizeOf(variablesorder), 0);
         vardascount := 1;
         while length(temp) > 0 do
@@ -574,26 +574,22 @@ begin
     if pos('Miestas, Šalis:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Miestas, Šalis:</th><td><strong>', rawHTM) - 1);
-      masina.miestas := Copy(rawHTM, pos('Miestas, Šalis:</th><td><strong>', rawHTM) +
-        length('Miestas, Šalis:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Miestas, Šalis:</th><td><strong>',
-        rawHTM) - length('Miestas, Šalis:</th><td><strong>'));
-      masina.salis := Copy(masina.miestas, pos(',', masina.miestas) + 2,
-        length(masina.miestas) - pos(',', masina.miestas) - 1);
+      masina.miestas := Copy(rawHTM, pos('Miestas, Šalis:</th><td><strong>', rawHTM) + length('Miestas, Šalis:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Miestas, Šalis:</th><td><strong>', rawHTM) - length('Miestas, Šalis:</th><td><strong>'));
+      masina.salis := Copy(masina.miestas, pos(',', masina.miestas) + 2, length(masina.miestas) - pos(',', masina.miestas) - 1);
       masina.miestas := Copy(masina.miestas, 1, pos(',', masina.miestas) - 1);
     end;
     if pos('Kaina Lietuvoje:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Kaina Lietuvoje:</th><td><strong>', rawHTM) - 1);
-      masina.kaina := Copy(rawHTM, pos('Kaina Lietuvoje:</th><td><strong>', rawHTM) +
-        length('Kaina Lietuvoje:</th><td><strong>'), pos('Lt', rawHTM) - pos('Kaina Lietuvoje:</th><td><strong>',
-        rawHTM) - length('Kaina Lietuvoje:</th><td><strong>') - 1);
+      masina.kaina := Copy(rawHTM, pos('Kaina Lietuvoje:</th><td><strong>', rawHTM) + length('Kaina Lietuvoje:</th><td><strong>'),
+        pos('Lt', rawHTM) - pos('Kaina Lietuvoje:</th><td><strong>', rawHTM) - length('Kaina Lietuvoje:</th><td><strong>') - 1);
     end;
     if pos('Pagaminimo data:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Pagaminimo data:', rawHTM) - 1);
-      masina.pagaminimo_data := Copy(rawHTM, pos('Pagaminimo data:</th><td><strong>', rawHTM) +
-        length('Pagaminimo data:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Pagaminimo data:</th><td><strong>',
-        rawHTM) - length('Pagaminimo data:</th><td><strong>'));
+      masina.pagaminimo_data := Copy(rawHTM, pos('Pagaminimo data:</th><td><strong>', rawHTM) + length('Pagaminimo data:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Pagaminimo data:</th><td><strong>', rawHTM) - length('Pagaminimo data:</th><td><strong>'));
     end;
     if pos('Rida, km:</th><td><strong>', rawHTM) > 0 then
     begin
@@ -616,9 +612,8 @@ begin
     if pos('Kuro tipas:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Kuro tipas:</th><td><strong>', rawHTM) - 1);
-      masina.kuro_tipas := Copy(rawHTM, pos('Kuro tipas:</th><td><strong>', rawHTM) +
-        length('Kuro tipas:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Kuro tipas:</th><td><strong>', rawHTM) -
-        length('Kuro tipas:</th><td><strong>'));
+      masina.kuro_tipas := Copy(rawHTM, pos('Kuro tipas:</th><td><strong>', rawHTM) + length('Kuro tipas:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Kuro tipas:</th><td><strong>', rawHTM) - length('Kuro tipas:</th><td><strong>'));
     end;
     if pos('Spalva:</th><td><strong>', rawHTM) > 0 then
     begin
@@ -629,30 +624,27 @@ begin
     if pos('Kėbulo tipas:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Kėbulo tipas:</th><td><strong>', rawHTM) - 1);
-      masina.kebulo_tipas := Copy(rawHTM, pos('Kėbulo tipas:</th><td><strong>', rawHTM) +
-        length('Kėbulo tipas:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Kėbulo tipas:</th><td><strong>',
-        rawHTM) - length('Kėbulo tipas:</th><td><strong>'));
+      masina.kebulo_tipas := Copy(rawHTM, pos('Kėbulo tipas:</th><td><strong>', rawHTM) + length('Kėbulo tipas:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Kėbulo tipas:</th><td><strong>', rawHTM) - length('Kėbulo tipas:</th><td><strong>'));
     end;
     if pos('Durų skaičius:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Durų skaičius:</th><td><strong>', rawHTM) - 1);
-      masina.duru_skaicius := Copy(rawHTM, pos('Durų skaičius:</th><td><strong>', rawHTM) +
-        length('Durų skaičius:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Durų skaičius:</th><td><strong>',
-        rawHTM) - length('Durų skaičius:</th><td><strong>'));
+      masina.duru_skaicius := Copy(rawHTM, pos('Durų skaičius:</th><td><strong>', rawHTM) + length('Durų skaičius:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Durų skaičius:</th><td><strong>', rawHTM) - length('Durų skaičius:</th><td><strong>'));
     end;
     if pos('Pavarų dėžės tipas:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Pavarų dėžės tipas:</th><td><strong>', rawHTM) - 1);
       masina.Pavaru_dezes_tipas := Copy(rawHTM, pos('Pavarų dėžės tipas:</th><td><strong>', rawHTM) +
-        length('Pavarų dėžės tipas:</th><td><strong>'), pos('</strong>', rawHTM) -
-        pos('Pavarų dėžės tipas:</th><td><strong>', rawHTM) - length('Pavarų dėžės tipas:</th><td><strong>'));
+        length('Pavarų dėžės tipas:</th><td><strong>'), pos('</strong>', rawHTM) - pos('Pavarų dėžės tipas:</th><td><strong>', rawHTM) -
+        length('Pavarų dėžės tipas:</th><td><strong>'));
     end;
     if pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) - 1);
-      masina.dauzta := Copy(rawHTM, pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) +
-        length('Daužta tr. priemonė:</th><td><strong>'), pos('</strong>', rawHTM) -
-        pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) - length('Daužta tr. priemonė:</th><td><strong>'));
+      masina.dauzta := Copy(rawHTM, pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) + length('Daužta tr. priemonė:</th><td><strong>'),
+        pos('</strong>', rawHTM) - pos('Daužta tr. priemonė:</th><td><strong>', rawHTM) - length('Daužta tr. priemonė:</th><td><strong>'));
     end;
     if pos('Vairas:</th><td><strong>', rawHTM) > 0 then
     begin
@@ -724,16 +716,15 @@ begin
     end;
     if (pos('Kaina:</span>', rawHTM) > 0) and (pos('Sutartinė', rawHTM) = 0) then
     begin
-      masina.kaina := Copy(rawHTM, pos('Kaina:</span>', rawHTM) + 13, pos('Lt', rawHTM) - pos('Kaina:</span>',
-        rawHTM) - 13);
+      masina.kaina := Copy(rawHTM, pos('Kaina:</span>', rawHTM) + 13, pos('Lt', rawHTM) - pos('Kaina:</span>', rawHTM) - 13);
     end;
     Delete(rawHTM, 1, pos('id="imn', rawHTM) + 7);
     masina.skelbimo_id := Copy(rawHTM, 1, pos('"', rawHTM) - 1);
     if (pos('Darbinis tūris l.:', rawHTM) > 0) then
     begin
       Delete(rawHTM, 1, pos('Darbinis tūris l.:', rawHTM) - 1);
-      masina.turis := StringReplace(Copy(rawHTM, pos('<b>', rawHTM) + 3, pos('</b>', rawHTM) - pos('<b>', rawHTM) - 3),
-        '.', ',', [rfReplaceAll]);
+      masina.turis := StringReplace(Copy(rawHTM, pos('<b>', rawHTM) + 3, pos('</b>', rawHTM) - pos('<b>', rawHTM) - 3), '.', ',',
+        [rfReplaceAll]);
       if masina.turis = '-' then
         masina.turis := ''
       else
@@ -754,8 +745,8 @@ begin
         masina.kuro_tipas := Copy(masina.kuro_tipas, 1, pos(#9, masina.kuro_tipas) - 1);
       end;
       if pos('<td>', masina.kuro_tipas) > 0 then
-        masina.kuro_tipas := Copy(masina.kuro_tipas, pos('<td>', masina.kuro_tipas) + 4,
-          pos('</td>', masina.kuro_tipas) - pos('<td>', masina.kuro_tipas) - 4);
+        masina.kuro_tipas := Copy(masina.kuro_tipas, pos('<td>', masina.kuro_tipas) + 4, pos('</td>', masina.kuro_tipas) - pos('<td>',
+          masina.kuro_tipas) - 4);
     end;
     if pos('Pavarų dėžė:', rawHTM) > 0 then
     begin
@@ -862,6 +853,358 @@ begin
   end;
 end;
 
+function ParseAutogidasAdvertExt(webpage: string; var masina: Adv_record): boolean;
+Var
+  HTTP1: TIdHTTP;
+  AdvertCardParser: TDIHtmlParser;
+  HTMLStream: TMemoryStream;
+  AString: String;
+begin
+  try
+    result := false;
+    HTTP1 := TIdHTTP.Create();
+    HTTP1.HandleRedirects := true;
+    HTMLStream := TMemoryStream.Create;
+
+    HTTP1.Get(webpage, HTMLStream);
+    HTMLStream.Position := 0;
+
+    AdvertCardParser := TDIHtmlParser.Create(nil);
+
+    RegisterHtmlTags;
+    RegisterHtmlAttribs;
+    RegisterHtmlDecodingEntities;
+
+    AdvertCardParser.SourceStream := HTMLStream;
+    AdvertCardParser.ReadMethods := Read_UTF_8;
+
+    { Show HTML tags and text }
+    AdvertCardParser.FilterHtmlTags.SetStartEnd(fiShow);
+    AdvertCardParser.FilterText := fiShow;
+
+    { Show HTML tags and text }
+    AdvertCardParser.FilterHtmlTags.SetStartEnd(fiShow);
+    AdvertCardParser.FilterText := fiShow;
+
+    masina.puslapis := webpage;
+
+    while AdvertCardParser.ParseNextPiece do
+      case AdvertCardParser.PieceType of
+        // What type of HTML piece did the parser find?
+        ptHtmlTag: // Found a tag.
+          case AdvertCardParser.HtmlTag.TagID of
+            TAG_DIV_ID: // Found a DIV tag.
+              begin
+                case AdvertCardParser.HtmlTag.TagType of
+                  ttStartTag:
+                    begin
+                      { div id="breadcrumb" }
+                      if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['id'], 'breadcrumb') then
+                      begin
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        if (AdvertCardParser.PieceType = ptText) and (trim(AdvertCardParser.DataAsStr) = '»') then
+                        begin
+                          AdvertCardParser.ParseNextPiece;
+                          AdvertCardParser.ParseNextPiece;
+                          masina.marke := trim(AdvertCardParser.DataAsStr);
+
+                          AdvertCardParser.ParseNextPiece;
+                          AdvertCardParser.ParseNextPiece;
+                          if (AdvertCardParser.PieceType = ptText) and (trim(AdvertCardParser.DataAsStr) = '»') then
+                          begin
+                            AdvertCardParser.ParseNextPiece;
+                            AdvertCardParser.ParseNextPiece;
+                            masina.modelis := trim(AdvertCardParser.DataAsStr);
+                            AdvertCardParser.ParseNextPiece;
+                            AdvertCardParser.ParseNextPiece;
+                            AdvertCardParser.ParseNextPiece;
+                            AdvertCardParser.ParseNextPiece;
+                            if AdvertCardParser.HtmlTag.TagName = 'h1' then
+                            begin
+                              AString := '';
+                              AdvertCardParser.ParseNextPiece;
+                              AString := AdvertCardParser.DataAsStr;
+                              if pos('m.', AString) > 0 then
+                              begin
+                                masina.pagaminimo_data := Copy(AString, pos('m. ', AString) - 7, 4);
+                                // if pos('/', masina.pagaminimo_data) > 0 then
+                                // masina.pagaminimo_data := Copy(Copy(AString, pos('m. ', AString) - 7, 7), 1, 4);
+                                if (masina.pagaminimo_data[1] <> '1') and (masina.pagaminimo_data[1] <> '2') then
+                                begin
+                                  masina.pagaminimo_data := '';
+                                end;
+                              end;
+                            end;
+                          end;
+                        end;
+                      end;
+                      { <div id="sklk"> }
+                      if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['id'], 'sklk') then
+                      begin
+                        while AdvertCardParser.ParseNextPiece do
+                          case AdvertCardParser.PieceType of
+                            ptHtmlTag: // Found a tag.
+                              case AdvertCardParser.HtmlTag.TagID of
+                                TAG_DIV_ID: // Found a DIV tag.
+                                  case AdvertCardParser.HtmlTag.TagType of
+                                    ttStartTag:
+                                      begin
+                                        { <div id="adprice"> }
+                                        if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['id'], 'adprice') then
+                                        begin
+                                          AdvertCardParser.ParseNextPiece;
+                                          AdvertCardParser.ParseNextPiece;
+                                          AString := '';
+                                          AString := AdvertCardParser.DataAsStr;
+                                          if (pos('Kaina:', AString) > 0) then
+                                          begin
+                                            Delete(AString, 1, 7);
+                                            if (pos('Lt', AString) > 0) then
+                                            begin
+                                              Delete(AString, pos('Lt', AString), 2);
+                                              masina.kaina := trim(AString);
+                                            end;
+                                          end;
+                                        end;
+                                        { div class="orli" }
+                                        if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['class'], 'orli') then
+                                        begin
+                                          while AdvertCardParser.ParseNextPiece do
+                                            case AdvertCardParser.PieceType of
+                                              ptText:
+                                                begin
+
+                                                  { 'Darbinis tūris l.: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Darbinis tūris l.:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AString := trim(AdvertCardParser.DataAsStr);
+                                                    if pos(DecimalSeparator, AString) > 0 then
+                                                      masina.turis := floatToStr(StrToFloat(AString) * 1000)
+                                                    else
+                                                    begin
+                                                      try
+                                                        if pos('.', AString) > 0 then
+                                                          AString := StringReplace(AString, '.', DecimalSeparator, [rfIgnoreCase])
+                                                        else if pos(',', AString) > 0 then
+                                                          AString := StringReplace(AString, ',', DecimalSeparator, [rfIgnoreCase])
+                                                        else
+                                                          AString := '';
+                                                        if AString <> '' then
+                                                          masina.turis := floatToStr(StrToFloat(AString) * 1000);
+                                                      except
+                                                        masina.turis := '';
+                                                      end;
+                                                    end;
+                                                    // For TEST
+                                                    // ShowMessage(masina.turis);
+                                                  end;
+
+                                                  { 'Kuro tipas: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Kuro tipas:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.kuro_tipas := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    // ShowMessage(masina.kuro_tipas);
+                                                  end;
+
+                                                  { Pavarų dėžė: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Pavarų dėžė:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.Pavaru_dezes_tipas := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    // ShowMessage(masina.Pavaru_dezes_tipas);
+                                                  end;
+
+                                                  { Durų skaičius: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Durų skaičius:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.duru_skaicius := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    // ShowMessage(masina.duru_skaicius);
+                                                  end;
+
+                                                  { Kėbulo tipas: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Kėbulo tipas:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.kebulo_tipas := trim(AdvertCardParser.DataAsStr);
+                                                    if masina.kebulo_tipas = 'Chečbekas' then
+                                                      masina.kebulo_tipas := 'Hečbekas'
+                                                    else if masina.kebulo_tipas = 'Coupe' then
+                                                      masina.kebulo_tipas := 'Kupė';
+                                                    // For TEST
+                                                    // ShowMessage(masina.kebulo_tipas);
+                                                  end;
+
+                                                  { Vairo padėtis: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Vairo padėtis:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.vairo_padetis := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.vairo_padetis);
+                                                  end;
+
+                                                  { Daužta tr. priemonė: }
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Daužta tr. priemonė:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    if trim(AdvertCardParser.DataAsStr) = 'Ne' then
+                                                    masina.dauzta := 'Nedaužta';
+                                                    if trim(AdvertCardParser.DataAsStr) = 'Taip' then
+                                                    masina.dauzta := 'Daužta';
+                                                    // For TEST
+                                                    //ShowMessage(masina.dauzta);
+                                                  end;
+
+                                                  {Rida, km:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Rida, km:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.rida := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.rida);
+                                                  end;
+
+                                                  {Spalva:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Spalva:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.spalva := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.spalva);
+                                                  end;
+
+                                                  {Galia kW:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Galia kW:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.galia := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.galia);
+                                                  end;
+
+                                                  {Vardas:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Vardas:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.vardas := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.vardas);
+                                                  end;
+
+                                                  {Kontaktinis telefonas:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Kontaktinis telefonas:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.telefonas := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.telefonas);
+                                                  end;
+
+                                                  {Miestas:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Miestas:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.miestas := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.miestas);
+                                                  end;
+
+                                                  {Šalis:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Šalis:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.salis := trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.salis);
+                                                  end;
+
+                                                  {Atnaujinimo data:}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Atnaujinimo data:' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.atnaujinimo_data:= trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.atnaujinimo_data);
+                                                  end;
+
+                                                  {Patalpintas į}
+                                                  if trim(AdvertCardParser.DataAsStr) = 'Patalpintas į' then
+                                                  begin
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.skelbimo_data:= trim(AdvertCardParser.DataAsStr);
+                                                    // For TEST
+                                                    //ShowMessage(masina.skelbimo_data);
+                                                  end;
+                                                end;
+                                            end;
+                                        end;
+                                      end;
+                                  end;
+                              end;
+                          end;
+                      end;
+                    end;
+                end;
+              end;
+          end;
+      end;
+    { Prevent of mandatory fields }
+    if (masina.marke = '') or (masina.modelis = '') then
+      Exit;
+
+    result := true;
+  finally
+    HTTP1.Free;
+    HTMLStream.Free;
+    AdvertCardParser.Free;
+  end;
+end;
+
 function ParseBRCAdvert(webpage: string; var masina: Adv_record): boolean;
 var
   TmpFileNameMarkes: TFileName;
@@ -909,8 +1252,7 @@ begin
       end;
       if (pos('<font color="#0033ff"><blink>', masina.kaina) > 0) then
       begin
-        masina.kaina := Copy(masina.kaina, pos('<blink>', masina.kaina) + 7,
-          length(masina.kaina) - pos('<blink>', masina.kaina) - 7);
+        masina.kaina := Copy(masina.kaina, pos('<blink>', masina.kaina) + 7, length(masina.kaina) - pos('<blink>', masina.kaina) - 7);
       end;
     end;
     if pos('Metai:', rawHTM) > 0 then
@@ -943,8 +1285,8 @@ begin
     begin
       Delete(rawHTM, 1, pos('Variklio tūris:', rawHTM) - 1);
       Delete(rawHTM, 1, pos('"ar">', rawHTM) - 1);
-      masina.turis := StringReplace(Copy(rawHTM, pos('"ar">', rawHTM) + 5, pos('l', rawHTM) - pos('"ar">', rawHTM) - 5),
-        '.', ',', [rfReplaceAll]);
+      masina.turis := StringReplace(Copy(rawHTM, pos('"ar">', rawHTM) + 5, pos('l', rawHTM) - pos('"ar">', rawHTM) - 5), '.', ',',
+        [rfReplaceAll]);
       if pos(' ', masina.turis) > 0 then
         masina.turis := Copy(masina.turis, 1, pos(' ', masina.turis) - 1);
       if pos(',', masina.turis) > 0 then
@@ -970,8 +1312,7 @@ begin
     begin
       Delete(rawHTM, 1, pos('Greičių dėžė:', rawHTM) - 1);
       Delete(rawHTM, 1, pos('"ar">', rawHTM) - 1);
-      masina.Pavaru_dezes_tipas := Copy(rawHTM, pos('"ar">', rawHTM) + 5,
-        pos('</td>', rawHTM) - pos('"ar">', rawHTM) - 5)
+      masina.Pavaru_dezes_tipas := Copy(rawHTM, pos('"ar">', rawHTM) + 5, pos('</td>', rawHTM) - pos('"ar">', rawHTM) - 5)
     end;
     masina.vairo_padetis := 'Kairėje';
     masina.dauzta := 'Nedaužta';
@@ -1028,8 +1369,7 @@ begin
     sl.Free;
 
     Delete(rawHTM, 1, pos('"keywords" content="', rawHTM) - 1);
-    masina.marke := Copy(rawHTM, pos('"keywords" content="', rawHTM) + 20,
-      pos('" />', rawHTM) - pos('"keywords" content="', rawHTM) - 20);
+    masina.marke := Copy(rawHTM, pos('"keywords" content="', rawHTM) + 20, pos('" />', rawHTM) - pos('"keywords" content="', rawHTM) - 20);
     masina.modelis := Copy(masina.marke, pos(' ', masina.marke) + 1, length(masina.marke));
     masina.modelis := Copy(masina.modelis, 1, pos(' ', masina.modelis) - 1);
     masina.marke := Copy(masina.marke, 1, pos(' ', masina.marke) - 1);
@@ -1061,8 +1401,7 @@ begin
     if pos('Fuel Type:', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Fuel Type:', rawHTM) - 1);
-      masina.kuro_tipas := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>',
-        rawHTM) - 8);
+      masina.kuro_tipas := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>', rawHTM) - 8);
       masina.kuro_tipas := StringReplace(masina.kuro_tipas, #9, '', [rfReplaceAll]);
       if masina.kuro_tipas = 'Petrol' then
         masina.kuro_tipas := 'Benzinas'
@@ -1074,15 +1413,13 @@ begin
     if pos('Door Count:', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Door Count:', rawHTM) - 1);
-      masina.duru_skaicius := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>',
-        rawHTM) - 8);
+      masina.duru_skaicius := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>', rawHTM) - 8);
       masina.duru_skaicius := Copy(masina.duru_skaicius, 1, pos(' ', masina.duru_skaicius) - 1);
     end;
     if pos('Gearbox:', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Gearbox:', rawHTM) - 1);
-      masina.Pavaru_dezes_tipas := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>',
-        rawHTM) - 8);
+      masina.Pavaru_dezes_tipas := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>', rawHTM) - 8);
       if masina.Pavaru_dezes_tipas = 'Manual gearbox' then
         masina.Pavaru_dezes_tipas := 'Mechaninė'
       else if masina.Pavaru_dezes_tipas = 'Automatic transmission' then
@@ -1091,16 +1428,14 @@ begin
     if pos('First Registration:', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('First Registration:', rawHTM) - 1);
-      masina.pagaminimo_data := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>',
-        rawHTM) - 8);
+      masina.pagaminimo_data := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>', rawHTM) - 8);
       masina.pagaminimo_data := StringReplace(masina.pagaminimo_data, #9, '', [rfReplaceAll]);
       masina.pagaminimo_data := Copy(masina.pagaminimo_data, 4, 4);
     end;
     if pos('Colour:', rawHTM) > 0 then
     begin
       Delete(rawHTM, 1, pos('Colour:', rawHTM) - 1);
-      masina.spalva := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>',
-        rawHTM) - 8);
+      masina.spalva := Copy(rawHTM, pos('<strong>', rawHTM) + 8, pos('</strong>', rawHTM) - pos('<strong>', rawHTM) - 8);
     end;
     {
 
@@ -1290,8 +1625,8 @@ begin
         end;
 
         AdvertisementsDataSet.Active := false;
-        AdvertisementsDataSet.sql.text := 'select * from "ADVERTISEMENTS" where "WEBSITE_ID"=' + inttostr(tipas) +
-          ' and "ADVERTISEMENTID"=' + masina.skelbimo_id;
+        AdvertisementsDataSet.sql.text := 'select * from "ADVERTISEMENTS" where "WEBSITE_ID"=' + inttostr(tipas) + ' and "ADVERTISEMENTID"='
+          + masina.skelbimo_id;
         AdvertisementsDataSet.Active := true;
       end;
       AdvertisementsDataSet.FetchAll;
@@ -1325,8 +1660,7 @@ begin
         else
           CarMakeID := CarMakesDataSetID.Value;
         CarModelsDataSet.Active := true;
-        if not(CarModelsDataSet.Locate('CARMAKE_ID; MODEL', VarArrayOf([CarMakeID, masina.modelis]),
-          [loCaseInsensitive])) then
+        if not(CarModelsDataSet.Locate('CARMAKE_ID; MODEL', VarArrayOf([CarMakeID, masina.modelis]), [loCaseInsensitive])) then
         begin
           CarModelsDataSet.Insert;
           CarModelsDataSetCARMAKE_ID.Value := CarMakeID;
@@ -1383,8 +1717,7 @@ begin
       if masina.kuro_tipas <> '' then
       begin
         FuelsDataSet.Active := true;
-        if not(FuelsDataSet.Locate('FUEL', StringReplace(masina.kuro_tipas, ' ', '', [rfReplaceAll]),
-          [loCaseInsensitive])) then
+        if not(FuelsDataSet.Locate('FUEL', StringReplace(masina.kuro_tipas, ' ', '', [rfReplaceAll]), [loCaseInsensitive])) then
         begin
           FuelsDataSet.Insert;
           FuelsDataSetFUEL.Value := StringReplace(masina.kuro_tipas, ' ', '', [rfReplaceAll]);
@@ -1556,8 +1889,8 @@ begin
         (AdvertisementsDataSetDAMAGED_ID.OldValue <> AdvertisementsDataSetDAMAGED_ID.Value) or
         (AdvertisementsDataSetDOORS_ID.OldValue <> AdvertisementsDataSetDOORS_ID.Value) or
         (AdvertisementsDataSetSELLER_ID.OldValue <> AdvertisementsDataSetSELLER_ID.Value) or
-        (AdvertisementsDataSetUSEDINLITHUANIA.OldValue <> AdvertisementsDataSetUSEDINLITHUANIA.Value)) and
-        (masina.atnaujinimo_data = '') then
+        (AdvertisementsDataSetUSEDINLITHUANIA.OldValue <> AdvertisementsDataSetUSEDINLITHUANIA.Value)) and (masina.atnaujinimo_data = '')
+      then
         AdvertisementsDataSetUPDATEDATE.AsDateTime := today;
 
       AdvertisementsDataSet.post;
@@ -1712,10 +2045,10 @@ begin
         end;
 
         inc(Count);
-        Delete(DataBuf, pos('http://www.autogidas.lt/skelbimai', DataBuf),
-          pos('.html', DataBuf) - pos('http://www.autogidas.lt/skelbimai', DataBuf) + 5);
-        Delete(DataBuf, pos('http://www.autogidas.lt/skelbimai', DataBuf),
-          pos('.html', DataBuf) - pos('http://www.autogidas.lt/skelbimai', DataBuf) + 5);
+        Delete(DataBuf, pos('http://www.autogidas.lt/skelbimai', DataBuf), pos('.html', DataBuf) - pos('http://www.autogidas.lt/skelbimai',
+          DataBuf) + 5);
+        Delete(DataBuf, pos('http://www.autogidas.lt/skelbimai', DataBuf), pos('.html', DataBuf) - pos('http://www.autogidas.lt/skelbimai',
+          DataBuf) + 5);
       except
         on e: exception do
         begin
@@ -1739,7 +2072,7 @@ function TLoadAdvertisementsForm.ParseAutogidasPageExt(webpage: string; var masi
 var
   HTMLStream: TMemoryStream;
   AStreamReader: TStreamReader;
-  AName: String;
+  ACount: integer;
 begin
   IdHTTP1.HandleRedirects := true;
   HTMLStream := TMemoryStream.Create;
@@ -1772,10 +2105,10 @@ begin
               case MyHtmlParser.HtmlTag.TagType of
                 ttStartTag:
                   begin
-                    AName := '';
                     { class=sk-sar }
                     if StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'sk-sar') then
                     begin
+                      ACount := 0;
                       while MyHtmlParser.ParseNextPiece do
                         case MyHtmlParser.PieceType of
                           ptHtmlTag:
@@ -1784,7 +2117,14 @@ begin
                               MyHtmlParser.ParseNextPiece;
                               if (MyHtmlParser.HtmlTag.TagID = 1) and (MyHtmlParser.HtmlTag.FirstName = 'href') then
                               begin
-                                ShowMessage(MyHtmlParser.HtmlTag.ValueOfNameCI['href']);
+                                Log.Lines.Add(DateTimeToStr(Now) + ' ' + MyHtmlParser.HtmlTag.ValueOfNameCI['href']);
+                                if not(ParseAutogidasAdvertExt(MyHtmlParser.HtmlTag.ValueOfNameCI['href'], masina[ACount])) then
+                                begin
+                                  Log.Lines.Strings[Log.Lines.Count - 1] := Log.Lines.Strings[Log.Lines.Count - 1] + '. Nerastas';
+                                end
+                                else
+                                  inc(ACount);
+                                // ShowMessage(MyHtmlParser.HtmlTag.ValueOfNameCI['href']);
                               end;
                             end;
                         end;
@@ -1795,6 +2135,8 @@ begin
         end;
     end;
   result := false;
+  // Laikina
+  Finish := true;
 end;
 
 function TLoadAdvertisementsForm.ParseMobilePage(webpage: string; var masina: array of Adv_record): boolean;
@@ -1840,8 +2182,7 @@ begin
         if Finish then
           Exit;
         martkestemp := Copy(DataBuf, pos('http://suchen.mobile.de/fahrzeuge/showDetails.html?id=', DataBuf),
-          pos('" class', DataBuf) - pos('http://suchen.mobile.de/fahrzeuge/showDetails.html?id=', DataBuf)) +
-          '&lang=en';
+          pos('" class', DataBuf) - pos('http://suchen.mobile.de/fahrzeuge/showDetails.html?id=', DataBuf)) + '&lang=en';
         Markes := PwideChar(martkestemp);
         if not(ParseMobileAdvert(Markes, masina[Count])) then
         begin
@@ -1933,16 +2274,14 @@ begin
           masina[Count].telefonas := Copy(DataBuf, 1, pos('<br />', DataBuf) - 1);
         end;
         if pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) > 0 then
-          Delete(DataBuf, 1, pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) +
-            length('car.brc?id=' + masina[Count].skelbimo_id));
+          Delete(DataBuf, 1, pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) + length('car.brc?id=' + masina[Count].skelbimo_id));
         inc(Count);
       except
         on e: exception do
         begin
           Log.Lines.Add(DateTimeToStr(Now) + ' ' + e.message);
           if pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) > 0 then
-            Delete(DataBuf, 1, pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) +
-              length('car.brc?id=' + masina[Count].skelbimo_id));
+            Delete(DataBuf, 1, pos('car.brc?id=' + masina[Count].skelbimo_id, DataBuf) + length('car.brc?id=' + masina[Count].skelbimo_id));
           inc(Count);
         end;
       end;
@@ -2025,8 +2364,8 @@ begin
       Found := true;
       Exit;
     end;
-    WebSite := 'http://auto.plius.lt/naudoti-automobiliai/?puslapis-1&make_date_from=' + inttostr(first) +
-      '&make_date_to=' + inttostr(Pivot) + '&make_id=' + inttostr(model_ID);
+    WebSite := 'http://auto.plius.lt/naudoti-automobiliai/?puslapis-1&make_date_from=' + inttostr(first) + '&make_date_to=' +
+      inttostr(Pivot) + '&make_id=' + inttostr(model_ID);
 
     AutoPliusFilterCount := CheckAutoPliusFilterCount(WebSite);
 
@@ -2104,9 +2443,8 @@ begin
                     Sleep(5000);
                     for i := 1 to 50 do
                     begin
-                      WebSite := PwideChar('http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) +
-                        '?make_date_from=' + inttostr(first) + '&make_date_to=' + inttostr(Current) + '&' +
-                        WebSite_temp);
+                      WebSite := PwideChar('http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '?make_date_from=' +
+                        inttostr(first) + '&make_date_to=' + inttostr(Current) + '&' + WebSite_temp);
                       Application.ProcessMessages;
                       if Finish then
                         Exit;
@@ -2135,8 +2473,7 @@ begin
                       Exit;
                     fillchar(masina, sizeOf(masina), 0);
                     Sleep(5000);
-                    WebSite := PwideChar('http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '&' +
-                      WebSite_temp);
+                    WebSite := PwideChar('http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '&' + WebSite_temp);
                     Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
                     if not(ParseAutopliusPage(WebSite, masina)) then
                     begin
@@ -2158,8 +2495,7 @@ begin
                 Application.ProcessMessages;
                 if Finish then
                   Exit;
-                WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-1' + '?make_id=' +
-                  inttostr(model_ID);
+                WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-1' + '?make_id=' + inttostr(model_ID);
                 WebSite := PwideChar(WebSite_temp);
                 FilterCount := CheckAutoPliusFilterCount(WebSite);
                 if FilterCount > 1000 then
@@ -2176,9 +2512,8 @@ begin
                     Sleep(5000);
                     for i := 1 to 50 do
                     begin
-                      WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) +
-                        '?make_date_from=' + inttostr(first) + '&make_date_to=' + inttostr(Current) + '&make_id=' +
-                        inttostr(model_ID);
+                      WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '?make_date_from=' +
+                        inttostr(first) + '&make_date_to=' + inttostr(Current) + '&make_id=' + inttostr(model_ID);
                       WebSite := PwideChar(WebSite_temp);
                       Application.ProcessMessages;
                       if Finish then
@@ -2208,8 +2543,7 @@ begin
                       Exit;
                     fillchar(masina, sizeOf(masina), 0);
                     Sleep(5000);
-                    WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '?make_id=' +
-                      inttostr(model_ID);
+                    WebSite_temp := 'http://auto.plius.lt/naudoti-automobiliai/puslapis-' + inttostr(i) + '?make_id=' + inttostr(model_ID);
                     WebSite := PwideChar(WebSite_temp);
                     Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
                     if not(ParseAutopliusPage(WebSite, masina)) then
@@ -2322,10 +2656,9 @@ begin
                 end
                 else
                   WebSite_temp := WebSite_temp + '0';
-                WebSite_temp := WebSite_temp + '&model=' +
-                  '&year_from=0&year_till=0&gearbox=0&fuel=0&mileage_from=0&mileage_to=0' +
-                  '&price_from=&price_to=&brc_ee=1&brc_lv=3&brc_lt=2&body_type=0&wheelbase=0&color=0&' +
-                  'mpay_from=&mpay_to=&city=0&page=' + inttostr(i);
+                WebSite_temp := WebSite_temp + '&model=' + '&year_from=0&year_till=0&gearbox=0&fuel=0&mileage_from=0&mileage_to=0' +
+                  '&price_from=&price_to=&brc_ee=1&brc_lv=3&brc_lt=2&body_type=0&wheelbase=0&color=0&' + 'mpay_from=&mpay_to=&city=0&page='
+                  + inttostr(i);
                 WebSite := PwideChar(WebSite_temp);
                 Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
                 if not(ParseBRCPage(WebSite, masina)) then
