@@ -783,4 +783,8 @@ object LoadAdvertisementsForm: TLoadAdvertisementsForm
     Left = 480
     Top = 56
   end
+  object AdvertCardParser: TDIHtmlParser
+    Left = 424
+    Top = 56
+  end
 end
