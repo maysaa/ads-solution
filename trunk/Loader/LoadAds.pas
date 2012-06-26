@@ -184,7 +184,7 @@ type
     procedure SaveAdvert(tipas: integer; masina: Adv_record);
     function ParseAutopliusPage(webpage: string; var masina: array of Adv_record): boolean;
     function ParseAutogidasPage(webpage: string; var masina: array of Adv_record): boolean;
-    function ParseAutogidasPageExt(webpage: string; var masina: array of Adv_record): boolean;
+    function ParseAutogidasPageExt(webpage: string; out NextWebpage: string; var masina: array of Adv_record): boolean;
     function ParseMobilePage(webpage: string; var masina: array of Adv_record): boolean;
     function ParseBRCPage(webpage: string; var masina: array of Adv_record): boolean;
   end;
@@ -945,6 +945,16 @@ begin
                           end;
                         end;
                       end;
+                      { class="advtools" }
+                      if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['class'], 'advtools') then
+                      begin
+                        AdvertCardParser.ParseNextPiece;
+                        AdvertCardParser.ParseNextPiece;
+                        AString := AdvertCardParser.DataAsStr;
+                        Delete(AString, 1, 3);
+                        masina.skelbimo_id := AString;
+                      end;
+
                       { <div id="sklk"> }
                       if StrSameIW(AdvertCardParser.HtmlTag.ValueOfNameCI['id'], 'sklk') then
                       begin
@@ -969,7 +979,8 @@ begin
                                             if (pos('Lt', AString) > 0) then
                                             begin
                                               Delete(AString, pos('Lt', AString), 2);
-                                              masina.kaina := trim(AString);
+                                              if trim(AString) <> '-' then
+                                                masina.kaina := trim(AString);
                                             end;
                                           end;
                                         end;
@@ -1065,7 +1076,7 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.vairo_padetis := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.vairo_padetis);
+                                                    // ShowMessage(masina.vairo_padetis);
                                                   end;
 
                                                   { Daužta tr. priemonė: }
@@ -1075,14 +1086,14 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     AdvertCardParser.ParseNextPiece;
                                                     if trim(AdvertCardParser.DataAsStr) = 'Ne' then
-                                                    masina.dauzta := 'Nedaužta';
+                                                      masina.dauzta := 'Nedaužta';
                                                     if trim(AdvertCardParser.DataAsStr) = 'Taip' then
-                                                    masina.dauzta := 'Daužta';
+                                                      masina.dauzta := 'Daužta';
                                                     // For TEST
-                                                    //ShowMessage(masina.dauzta);
+                                                    // ShowMessage(masina.dauzta);
                                                   end;
 
-                                                  {Rida, km:}
+                                                  { Rida, km: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Rida, km:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1090,10 +1101,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.rida := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.rida);
+                                                    // ShowMessage(masina.rida);
                                                   end;
 
-                                                  {Spalva:}
+                                                  { Spalva: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Spalva:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1101,10 +1112,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.spalva := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.spalva);
+                                                    // ShowMessage(masina.spalva);
                                                   end;
 
-                                                  {Galia kW:}
+                                                  { Galia kW: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Galia kW:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1112,10 +1123,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.galia := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.galia);
+                                                    // ShowMessage(masina.galia);
                                                   end;
 
-                                                  {Vardas:}
+                                                  { Vardas: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Vardas:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1123,10 +1134,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.vardas := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.vardas);
+                                                    // ShowMessage(masina.vardas);
                                                   end;
 
-                                                  {Kontaktinis telefonas:}
+                                                  { Kontaktinis telefonas: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Kontaktinis telefonas:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1134,10 +1145,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.telefonas := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.telefonas);
+                                                    // ShowMessage(masina.telefonas);
                                                   end;
 
-                                                  {Miestas:}
+                                                  { Miestas: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Miestas:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1145,10 +1156,10 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.miestas := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.miestas);
+                                                    // ShowMessage(masina.miestas);
                                                   end;
 
-                                                  {Šalis:}
+                                                  { Šalis: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Šalis:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
@@ -1156,29 +1167,32 @@ begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     masina.salis := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.salis);
+                                                    // ShowMessage(masina.salis);
                                                   end;
 
-                                                  {Atnaujinimo data:}
+                                                  { Atnaujinimo data: }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Atnaujinimo data:' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     AdvertCardParser.ParseNextPiece;
                                                     AdvertCardParser.ParseNextPiece;
-                                                    masina.atnaujinimo_data:= trim(AdvertCardParser.DataAsStr);
+                                                    masina.atnaujinimo_data := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.atnaujinimo_data);
+                                                    // ShowMessage(masina.atnaujinimo_data);
                                                   end;
 
-                                                  {Patalpintas į}
+                                                  { Patalpintas į }
                                                   if trim(AdvertCardParser.DataAsStr) = 'Patalpintas į' then
                                                   begin
                                                     AdvertCardParser.ParseNextPiece;
                                                     AdvertCardParser.ParseNextPiece;
                                                     AdvertCardParser.ParseNextPiece;
-                                                    masina.skelbimo_data:= trim(AdvertCardParser.DataAsStr);
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    AdvertCardParser.ParseNextPiece;
+                                                    masina.skelbimo_data := trim(AdvertCardParser.DataAsStr);
                                                     // For TEST
-                                                    //ShowMessage(masina.skelbimo_data);
+                                                    // ShowMessage(masina.skelbimo_data);
                                                   end;
                                                 end;
                                             end;
@@ -1193,6 +1207,7 @@ begin
               end;
           end;
       end;
+
     { Prevent of mandatory fields }
     if (masina.marke = '') or (masina.modelis = '') then
       Exit;
@@ -2068,11 +2083,13 @@ begin
   result := true;
 end;
 
-function TLoadAdvertisementsForm.ParseAutogidasPageExt(webpage: string; var masina: array of Adv_record): boolean;
+function TLoadAdvertisementsForm.ParseAutogidasPageExt(webpage: string; out NextWebpage: string; var masina: array of Adv_record): boolean;
 var
   HTMLStream: TMemoryStream;
   AStreamReader: TStreamReader;
   ACount: integer;
+  i, ii, found: integer;
+
 begin
   IdHTTP1.HandleRedirects := true;
   HTMLStream := TMemoryStream.Create;
@@ -2095,6 +2112,13 @@ begin
   MyHtmlParser.FilterHtmlTags.SetStartEnd(fiShow);
   MyHtmlParser.FilterText := fiShow;
 
+  i := 0;
+  ii := 0;
+
+  Application.ProcessMessages;
+  if Finish then
+    Exit;
+
   while MyHtmlParser.ParseNextPiece do
     case MyHtmlParser.PieceType of
       // What type of HTML piece did the parser find?
@@ -2105,7 +2129,68 @@ begin
               case MyHtmlParser.HtmlTag.TagType of
                 ttStartTag:
                   begin
-                    { class=sk-sar }
+                    { <div class="paging"> }
+                    if StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'paging') then
+                    begin
+                      (* for i := 0 to 40 do
+                        begin
+                        MyHtmlParser.ParseNextPiece;
+                        if (MyHtmlParser.PieceType = ptHtmlTag) and (StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'next-prev') or
+                        StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'next-prev inactive-page')) then
+                        inc(ii); // Count how much found
+                        if ii = 2 then
+                        begin
+                        if MyHtmlParser.DataAsStr = 'next-prev inactive-page' then
+                        NextWebpage := ''
+                        else
+                        NextWebpage := MyHtmlParser.HtmlTag.FirstValue;
+                        found := 1;
+                        Break; // Return
+                        end;
+                        end;
+                      *)
+                      while (MyHtmlParser.ParseNextPiece) and (found = 0) do
+                        case MyHtmlParser.PieceType of
+                          ptHtmlTag:
+                            begin
+                              if (MyHtmlParser.PieceType = ptHtmlTag) and
+                                (StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'next-prev') or
+                                StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'next-prev inactive-page')) then
+                                inc(ii); // Count how much found
+                              if ii = 2 then
+                              begin
+                                if MyHtmlParser.DataAsStr = 'next-prev inactive-page' then
+                                  NextWebpage := ''
+                                else
+                                  NextWebpage := MyHtmlParser.HtmlTag.FirstValue;
+                                found := 1;
+                                Break; // Return
+                              end;
+                            end;
+                        end;
+
+                      (* while (MyHtmlParser.ParseNextPiece) and (found = 0) do
+                        case MyHtmlParser.PieceType of
+                        ptHtmlTag:
+                        if StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'next-prev') then
+                        begin
+                        inc(i);
+                        if i = 2 then
+                        begin
+                        if MyHtmlParser.DataAsStr = 'next-prev inactive-page' then
+                        NextWebpage := ''
+                        else
+                        NextWebpage := MyHtmlParser.HtmlTag.FirstValue;
+                        found := 1;
+                        Break; // Return
+                        end;
+                        end;
+
+                        end; *)
+
+                    end;
+
+                    { class="sk-sar" }
                     if StrSameIW(MyHtmlParser.HtmlTag.ValueOfNameCI['class'], 'sk-sar') then
                     begin
                       ACount := 0;
@@ -2134,9 +2219,7 @@ begin
             end;
         end;
     end;
-  result := false;
-  // Laikina
-  Finish := true;
+  result := true;
 end;
 
 function TLoadAdvertisementsForm.ParseMobilePage(webpage: string; var masina: array of Adv_record): boolean;
@@ -2349,19 +2432,19 @@ end;
 function BinSearch(first, last, model_ID: integer): integer;
 var
   Pivot: integer;
-  Found: boolean;
+  found: boolean;
   WebSite: string;
   AutoPliusFilterCount: integer;
 begin
-  Found := false;
+  found := false;
   result := -1;
-  while (first <= last) and (not Found) do
+  while (first <= last) and (not found) do
   begin
     Pivot := (first + last) div 2;
     if Pivot = first then
     begin
       result := last;
-      Found := true;
+      found := true;
       Exit;
     end;
     WebSite := 'http://auto.plius.lt/naudoti-automobiliai/?puslapis-1&make_date_from=' + inttostr(first) + '&make_date_to=' +
@@ -2371,7 +2454,7 @@ begin
 
     if (0 < AutoPliusFilterCount) and (AutoPliusFilterCount < 1000) then
     begin
-      Found := true;
+      found := true;
       result := Pivot;
       Exit;
     end
@@ -2394,6 +2477,10 @@ var
   last: integer;
   first: integer;
   Current: integer;
+  HTMLStream: TMemoryStream;
+  NextPage: boolean;
+  ANextPage: String;
+  AutogidasSite: String;
 begin
   try
     if not(OnlyOld).Checked then
@@ -2565,34 +2652,78 @@ begin
         2:
           begin
             Log.Lines.Add('Autogidas');
-            for i := 1 to 4000 do
+            Application.ProcessMessages;
+            if Finish then
+              Exit;
+
+            fillchar(masina, sizeOf(masina), 0);
+
+            // Laikina
+            // Sleep(5000); // sleep po kieknvieno puslapio su daug skelbimu
+            { INIT page }
+            AutogidasSite := 'http://www.autogidas.lt';
+            WebSite_temp := AutogidasSite + '/automobiliai/?';
+            if MakeComboBox.text <> '' then
+              WebSite_temp := WebSite_temp + '&f_1=' + MakeComboBox.text;
+            WebSite_temp := WebSite_temp + '&search=Surasti';
+
+            WebSite := PwideChar(WebSite_temp);
+
+            NextPage := true;
+            while NextPage do
             begin
+              Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
+              if not(ParseAutogidasPageExt(WebSite, ANextPage, masina)) then
+              begin
+                Log.Lines.Strings[Log.Lines.Count - 1] := Log.Lines.Strings[Log.Lines.Count - 1] + '. Nerastas';
+                NextPage := false;
+              end;
+              if ANextPage <> '' then
+                WebSite := AutogidasSite + ANextPage
+              else
+                NextPage := false;
+
+              { Save }
+              for j := 1 to 200 do
+              begin
+                SaveAdvert(tipas, masina[j]);
+              end;
+
+            end;
+
+            (*
+              Log.Lines.Add('Autogidas');
+              for i := 1 to 4000 do
+              begin
               Application.ProcessMessages;
               if Finish then
-                Exit;
+              Exit;
               fillchar(masina, sizeOf(masina), 0);
 
               begin
-                Sleep(500); // sleep po kieknvieno puslapio su daug skelbimu
-                // WebSite_temp := 'http://www.autogidas.lt/skelbimai/lengvieji-automobiliai/?';
-                WebSite_temp := 'http://www.autogidas.lt/automobiliai/?';
-                if MakeComboBox.text <> '' then
-                  WebSite_temp := WebSite_temp + 'f_1=' + MakeComboBox.text + '&';
-                WebSite_temp := WebSite_temp + 'section=01&f_50=kaina_asc&puslapis=' + inttostr(i) + '#content';
-                WebSite := PwideChar(WebSite_temp);
-                Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
-                // if not(ParseAutogidasPage(WebSite, masina)) then
-                if not(ParseAutogidasPageExt(WebSite, masina)) then
-                begin
-                  Log.Lines.Strings[Log.Lines.Count - 1] := Log.Lines.Strings[Log.Lines.Count - 1] + '. Nerastas';
-                  Break;
-                end;
-                for j := 1 to 200 do
-                begin
-                  SaveAdvert(tipas, masina[j]);
-                end;
+              //Laikina
+              //Sleep(5000); // sleep po kieknvieno puslapio su daug skelbimu
+              {INIT page}
+              WebSite_temp := 'http://www.autogidas.lt/automobiliai/?';
+              if MakeComboBox.text <> '' then
+              WebSite_temp := WebSite_temp + 'f_1=' + MakeComboBox.text;
+              WebSite_temp := WebSite_temp + '&search=Surasti';
+
+              WebSite := PwideChar(WebSite_temp);
+              Log.Lines.Add(DateTimeToStr(Now) + ' ' + WebSite);
+
+
+              if not(ParseAutogidasPageExt(WebSite, masina)) then
+              begin
+              Log.Lines.Strings[Log.Lines.Count - 1] := Log.Lines.Strings[Log.Lines.Count - 1] + '. Nerastas';
+              Break;
               end;
-            end;
+              for j := 1 to 200 do
+              begin
+              SaveAdvert(tipas, masina[j]);
+              end;
+              end;
+              end; *)
           end;
 {$ENDREGION}
 {$REGION 'MOBILE'}

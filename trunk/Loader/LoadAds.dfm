@@ -525,6 +525,7 @@ object LoadAdvertisementsForm: TLoadAdvertisementsForm
     Top = 192
     object PowerDataSetID: TADAutoIncField
       FieldName = 'ID'
+      Origin = '"ID"'
       ProviderFlags = [pfInWhere, pfInKey]
     end
     object PowerDataSetPOWER: TIntegerField
