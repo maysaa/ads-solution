@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.153,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.645,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.731,D:\DEV\ADS\trunk\ALoader\Library\Unit1.pas=D:\DEV\ADS\trunk\ALoader\Library\ALoaderUNT.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.123,=D:\DEV\ADS\trunk\ALoader\Library\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.518,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.649,C:\Users\User\Documents\RAD Studio\Projects\Project1.dproj=D:\DEV\ADS\trunk\ALoader\Library\ALoaderLib.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.140,D:\DEV\ADS\trunk\ALoader\Library\Unit2.dfm=D:\DEV\ADS\trunk\ALoader\Library\MainFRM.dfm</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.140,D:\DEV\ADS\trunk\ALoader\Library\Unit2.pas=D:\DEV\ADS\trunk\ALoader\Library\MainFRM.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.444,=D:\DEV\ADS\trunk\ALoader\Library\Unit2.pas</Transaction>
+  </Transactions>
+</BorlandProject>
