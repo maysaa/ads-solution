@@ -1,0 +1,46 @@
+https://www.vic.lt:8102/pls/gris/kl_main.pirmas#
+VG0344
+dzV_3Kmk
+
+VG0344
+DMANT_3K
+
+
+https://www.vic.lt:8102/pls/gris/ataskaitos_add1.news
+
+https://www.vic.lt:8102/pls/gris/ataskaitos.gyvulio_judejimo_forma
+
+https://VG0344:dzV_3Kmk@www.vic.lt:8102/pls/gris/ataskaitos.gyvulio_judejimo_forma
+
+https://www.vic.lt:8102/pls/gris/ataskaitos.gyvulio_judejimo_forma
+
+05816667
+05816669
+05816831
+05816834
+05816835
+
+8678 29 222 Irena SN
+http://www.cryer.co.uk/brian/delphi/twebbrowser/twebbrowser_oleobject.htm#OleObject.Document
+
+
+http://stackoverflow.com/questions/3525708/how-to-set-value-for-checkbox-via-embeddedwb-fillform-delphi
+
+Frame:
+
+Var
+  OleContainer: IOleContainer;
+  enum: IEnumUnknown;
+  unk: IUnknown;
+  Fetched: PLongint;
+  Res: IWebBrowser2;
+begin
+    Fetched := nil;
+    OleContainer := Wb.Document as IOleContainer;
+    OleContainer.EnumObjects(OLECONTF_EMBEDDINGS, Enum);
+    Enum.Skip(FRAME_INDEX);
+    Enum.Next(1, Unk, Fetched);
+    Res := Unk as IWebbrowser2; //RESULT
+
+
+http://www.swissdelphicenter.ch/torry/showcode.php?id=2054
