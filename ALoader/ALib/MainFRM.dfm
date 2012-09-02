@@ -2,8 +2,8 @@ object frmMain: TfrmMain
   Left = 0
   Top = 0
   Caption = 'Main'
-  ClientHeight = 425
-  ClientWidth = 674
+  ClientHeight = 491
+  ClientWidth = 759
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,24 +13,22 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
-  OnCloseQuery = FormCloseQuery
   PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 674
+    Width = 759
     Height = 41
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 72
-    ExplicitWidth = 472
+    ExplicitWidth = 674
     DesignSize = (
-      674
+      759
       41)
     object lblAnimalNo: TLabel
-      Left = 404
+      Left = 489
       Top = 11
       Width = 55
       Height = 13
@@ -39,7 +37,7 @@ object frmMain: TfrmMain
       ExplicitLeft = 202
     end
     object lblUser: TLabel
-      Left = 107
+      Left = 192
       Top = 11
       Width = 26
       Height = 13
@@ -48,7 +46,7 @@ object frmMain: TfrmMain
       ExplicitLeft = 55
     end
     object lblPassword: TLabel
-      Left = 214
+      Left = 299
       Top = 11
       Width = 50
       Height = 13
@@ -57,7 +55,7 @@ object frmMain: TfrmMain
       ExplicitLeft = 162
     end
     object Bevel1: TBevel
-      Left = 389
+      Left = 474
       Top = 11
       Width = 9
       Height = 16
@@ -65,18 +63,26 @@ object frmMain: TfrmMain
       Shape = bsLeftLine
       ExplicitLeft = 337
     end
+    object lblCompany: TLabel
+      Left = 16
+      Top = 11
+      Width = 49
+      Height = 13
+      Anchors = [akTop, akRight]
+      Caption = 'Company:'
+    end
     object txtAnimalNo: TEdit
-      Left = 465
+      Left = 550
       Top = 8
       Width = 121
       Height = 21
       Anchors = [akTop, akRight]
       TabOrder = 0
       Text = 'LT0000'
-      ExplicitLeft = 263
+      ExplicitLeft = 465
     end
     object btnSubmit: TButton
-      Left = 592
+      Left = 677
       Top = 6
       Width = 75
       Height = 25
@@ -84,20 +90,20 @@ object frmMain: TfrmMain
       Caption = 'Submit'
       TabOrder = 1
       OnClick = btnSubmitClick
-      ExplicitLeft = 390
+      ExplicitLeft = 592
     end
     object txtUser: TEdit
-      Left = 139
+      Left = 224
       Top = 8
       Width = 69
       Height = 21
       Anchors = [akTop, akRight]
       TabOrder = 2
       Text = 'VG0344'
-      ExplicitLeft = 87
+      ExplicitLeft = 139
     end
     object txtpassword: TEdit
-      Left = 270
+      Left = 355
       Top = 8
       Width = 90
       Height = 21
@@ -105,58 +111,68 @@ object frmMain: TfrmMain
       PasswordChar = '*'
       TabOrder = 3
       Text = 'DMANT_3K'
-      ExplicitLeft = 218
+      ExplicitLeft = 270
     end
     object CheckBox1: TCheckBox
-      Left = 366
+      Left = 451
       Top = 10
       Width = 17
       Height = 17
       Anchors = [akTop, akRight]
       TabOrder = 4
       OnClick = CheckBox1Click
-      ExplicitLeft = 314
+      ExplicitLeft = 366
+    end
+    object txtCompany: TEdit
+      Left = 71
+      Top = 8
+      Width = 115
+      Height = 21
+      Anchors = [akTop, akRight]
+      TabOrder = 5
+      Text = 'UAB" BARTYNCO "'
     end
   end
   object pnlMain: TPanel
     Left = 0
     Top = 41
-    Width = 674
-    Height = 384
+    Width = 759
+    Height = 431
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitLeft = 96
-    ExplicitTop = 96
-    ExplicitWidth = 185
-    ExplicitHeight = 41
+    ExplicitWidth = 674
+    ExplicitHeight = 384
     object PageControl1: TPageControl
       Left = 0
       Top = 0
-      Width = 674
-      Height = 384
-      ActivePage = TabSheet1
+      Width = 759
+      Height = 431
+      ActivePage = TabSheet2
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 472
-      ExplicitHeight = 202
+      ExplicitWidth = 674
+      ExplicitHeight = 384
       object TabSheet1: TTabSheet
         Caption = 'Browser'
-        ExplicitWidth = 281
-        ExplicitHeight = 165
+        ExplicitWidth = 666
+        ExplicitHeight = 356
         object WB1: TEmbeddedWB
           Left = 0
           Top = 0
-          Width = 666
-          Height = 356
+          Width = 751
+          Height = 403
           Align = alClient
           TabOrder = 0
+          Silent = False
           DisableCtrlShortcuts = 'N'
           UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
           OnAuthenticate = WB1Authenticate
           About = ' EmbeddedWB http://bsalsa.com/'
+          PrintOptions.Header = '&w&bPage &p of &P'
           PrintOptions.HTMLHeader.Strings = (
             '<HTML></HTML>')
+          PrintOptions.Footer = '&u&b&d'
           PrintOptions.Orientation = poPortrait
           ExplicitLeft = 120
           ExplicitTop = 80
@@ -173,9 +189,35 @@ object frmMain: TfrmMain
       object TabSheet2: TTabSheet
         Caption = 'Result'
         ImageIndex = 1
-        ExplicitWidth = 281
-        ExplicitHeight = 165
+        ExplicitLeft = 0
+        ExplicitTop = 32
+        object Memo1: TMemo
+          Left = 29
+          Top = 24
+          Width = 652
+          Height = 329
+          Lines.Strings = (
+            'Memo1')
+          ScrollBars = ssBoth
+          TabOrder = 0
+        end
       end
     end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 472
+    Width = 759
+    Height = 19
+    Panels = <
+      item
+        Width = 500
+      end
+      item
+        Width = 500
+      end>
+    ExplicitLeft = 552
+    ExplicitTop = 480
+    ExplicitWidth = 0
   end
 end
