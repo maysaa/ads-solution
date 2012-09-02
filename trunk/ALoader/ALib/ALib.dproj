@@ -69,6 +69,8 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<Debugger_RunParams>&quot;d:\DEV\ADS\trunk\ALoader\ALib\Win32\Debug\ALib.dll &quot; Debug</Debugger_RunParams>
+			<Debugger_HostApplication>c:\Windows\System32\rundll32.exe</Debugger_HostApplication>
 			<DCC_RemoteDebug>false</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
