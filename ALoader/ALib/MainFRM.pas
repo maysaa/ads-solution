@@ -51,6 +51,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button1Click(Sender: TObject);
     procedure WB1DocumentComplete(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
+    function NavigateDetail2(AHTML: String): Boolean;
 
   private
     { Private declarations }
@@ -61,9 +62,17 @@ type
 Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean; Export;
 Procedure Debug(); Export;
 Function Test(a: PChar): Boolean; Export;
-Function ParseHeader(AHTML: String): Boolean;
-Function ParseValue(AName, AString: String): String;
+Function ParseHeader2(AHTML: String): Boolean;
+Function ParseValue2(AName, AString: String): String;
 function StripHTML(S: string): string;
+
+Const
+
+  URL1 = 'https://www.vic.lt:8102/pls/gris/kl_main.pirmas#';
+  URL2 = 'https://www.vic.lt:8102/pls/gris/ataskaitos.gyvulio_judejimo_forma';
+
+  URLCompare1 = 'https://www.vic.lt:8102/pls/gris/kl_main.pirmas';
+  URLCompare2 = 'https://www.vic.lt:8102/pls/gris/ataskaitos';
 
 var
   frmMain: TfrmMain;
@@ -72,22 +81,25 @@ var
   gloLivestock: TAnimal;
   gloHTML: String = '';
   gloCount: Integer;
+  gloCompany: String;
+  gloSearchNumber: String;
 
 implementation
 
 Function Test(a: PChar): Boolean;
 begin
   Result := True;
-  //ShowMessage('Test');
+  // ShowMessage('Test');
 end;
 
 Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean;
 begin
   gloCount := 0;
-  AUser := StrAlloc(MAX_PATH);
-  APassword := StrAlloc(MAX_PATH);
+  // AUser := StrAlloc(MAX_PATH);
+  // APassword := StrAlloc(MAX_PATH);
+  // ACompany := StrAlloc(MAX_PATH);
+  // ASearchNumber := StrAlloc(MAX_PATH);
 
-  //ShowMessage('GetData start ' + IntToStr(Length(AUser)));
   Result := False;
 
   if Trim(AUser) <> '' then
@@ -96,14 +108,22 @@ begin
   if Trim(APassword) <> '' then
     gloPsw := APassword;
 
+  if Trim(ACompany) <> '' then
+    gloCompany := ACompany;
+
+  if Trim(ASearchNumber) <> '' then
+    gloSearchNumber := ASearchNumber;
+
   if not assigned(frmMain) then
     Exit;
 
-  frmMain.Get1('LT000005816831');
+  // frmMain.Get1('LT000005816831');
+  Result := frmMain.Get2(gloSearchNumber);
 
-  //ShowMessage('GetData end');
-  StrDispose(AUser);
-  StrDispose(APassword);
+  // StrDispose(AUser);
+  // StrDispose(APassword);
+  // StrDispose(ACompany);
+  // StrDispose(ASearchNumber);
 end;
 
 Procedure Debug();
@@ -118,35 +138,9 @@ end;
 {$R *.dfm}
 
 procedure TfrmMain.btnSubmitClick(Sender: TObject);
-var
-  doc: IHTMLDocument2;
-  ElementCollection: IHTMLElementCollection;
-  iall: IHTMLElement;
-
-  i: Integer;
 begin
-  Get2('LT000006042643');
-
-  // ShowMessage('before parse');
-
-//  doc := WB1.Document as IHTMLDocument2;
-//
-//  iall := doc.body;
-//
-//  while iall.parentElement <> nil do
-//  begin
-//    iall := iall.parentElement;
-//  end;
-
-  //ParseHeader(iall.outerHTML);
-
-  // memResult.Lines.Add(iall.outerHTML);
-
-  // // Memo1.Text := iall.outerHTML;
-  // //
-  // // ParseHeader(Memo1.Lines);
-  //
-  // memResult.Lines.Add(gloLivestock.Number);
+  if not GetData(PChar(txtUser.Text), PChar(txtpassword.Text), PChar(txtCompany.Text), PChar(txtAnimalNo.Text)) then
+    MessageDlg('An error occurs ...', mtError, [mbOK], 0);
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -201,7 +195,7 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  //ShowMessage('Close');
+  // ShowMessage('Close');
 end;
 
 function TfrmMain.Get1(ANumber: String): Boolean;
@@ -283,27 +277,117 @@ end;
 function TfrmMain.Get2(ANumber: String): Boolean;
 begin
   Result := False;
-  WB1.Stop;
-  WB1.GoAboutBlank;
-  while WB1.ReadyState < READYSTATE_INTERACTIVE do
-    Application.ProcessMessages;
+  try
 
-  { Open page and wait }
-  WB1.Navigate('https://www.vic.lt:8102/pls/gris/ataskaitos.gyvulio_judejimo_forma');
-  while WB1.ReadyState < READYSTATE_COMPLETE do
-    Application.ProcessMessages;
+    WB1.Stop;
+    WB1.GoAboutBlank;
+    while WB1.ReadyState < READYSTATE_INTERACTIVE do
+      Application.ProcessMessages;
 
-  { Fill edit with value }
-  WB1.OleObject.Document.Forms.item(0).elements.item(0).value := ANumber;
+    { Open page and wait }
+    WB1.Navigate(URL2);
+    while WB1.ReadyState < READYSTATE_COMPLETE do
+      Application.ProcessMessages;
 
-  { Execute Java Script to submit data }
-  WB1.ExecScript('document.forma.submit()', 'JavaScript');
-  while WB1.ReadyState < READYSTATE_COMPLETE do
-    Application.ProcessMessages;
+    { Fill edit with value }
+    WB1.OleObject.Document.Forms.item(0).elements.item(0).value := ANumber;
 
+    { Execute Java Script to submit data }
+    WB1.ExecScript('document.forma.submit()', 'JavaScript');
+    while WB1.ReadyState < READYSTATE_COMPLETE do
+      Application.ProcessMessages;
+
+    Result := True;
+  except
+
+  end;
 end;
 
-function ParseHeader(AHTML: String): Boolean;
+function TfrmMain.NavigateDetail2(AHTML: String): Boolean;
+var
+  ATableStart, ATableEnd, ATR1, ATR2, AString: String;
+  APosition, APosition2: Integer;
+  ATable: TStringList;
+begin
+  Result := False;
+
+  try
+
+    ATable := TStringList.Create;
+
+    if Trim(AHTML) = '' then
+      Exit;
+
+    ATableStart := '<table';
+    ATableEnd := '</table';
+    ATR1 := '<tr';
+    ATR2 := '</tr>';
+
+    { First table found }
+    APosition := Pos(ATableStart, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition + Length(ATableStart)); // Truncate begining until current string
+
+    { Second table found }
+    APosition := Pos(ATableStart, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition + Length(ATableStart)); // Truncate begining until current string
+
+    { Third table found }
+    APosition := Pos(ATableStart, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition - 1); // Truncate begining until current string
+
+    { Find third table end }
+    APosition := Pos(ATableEnd, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, APosition, Length(AHTML) - APosition + 1);
+
+    { Find tables, first, second skip }
+    APosition := Pos(ATR1, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition + Length(ATR1));
+
+    APosition := Pos(ATR1, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition + Length(ATR1));
+
+     APosition := Pos(ATR1, AHTML);
+    if APosition = 0 then
+      Exit;
+    Delete(AHTML, 1, APosition + Length(ATR1));
+
+    APosition := Pos(ATR1, AHTML);
+    if APosition = 0 then
+      Exit;
+
+    while APosition <> 0 do
+    begin
+      APosition2:= Pos (ATR2, AHTML);//Search </TR
+          AString:= AHTML;
+      APosition:= Pos(ATR2, AString);
+
+      Delete(AString, APosition,  Length(AString)- APosition);
+      ATable.Add(Trim(AString));
+      delete(AHTML, 1, APosition2 + Length(ATR1)+ Length(ATR2)+1);
+      APosition:= POS(ATR2, AHTML);
+    end;
+
+
+
+    Result := True;
+  finally
+    ATable.Free;
+  end;
+end;
+
+function ParseHeader2(AHTML: String): Boolean;
 var
   S: String;
   i, APosition, AStart, AEnd: Integer;
@@ -314,19 +398,19 @@ begin
   if Trim(AHTML) = '' then
     Exit;
 
-  gloLivestock.Number := ParseValue('Gyvulio numeris:', AHTML);
-  gloLivestock.Species := ParseValue('Rûðis:', AHTML);
-  gloLivestock.Gender := ParseValue('Lytis:', AHTML);
-  gloLivestock.Breed := ParseValue('Veislë:', AHTML);
-  gloLivestock.DateOfBirth := ParseValue('Gimimo data:', AHTML);
-  gloLivestock.MotherNumber := ParseValue('Motinos  Nr.:', AHTML);
-  gloLivestock.Passport := ParseValue('Pasas:', AHTML);
+  gloLivestock.Number := ParseValue2('Gyvulio numeris:', AHTML);
+  gloLivestock.Species := ParseValue2('Rûðis:', AHTML);
+  gloLivestock.Gender := ParseValue2('Lytis:', AHTML);
+  gloLivestock.Breed := ParseValue2('Veislë:', AHTML);
+  gloLivestock.DateOfBirth := ParseValue2('Gimimo data:', AHTML);
+  gloLivestock.MotherNumber := ParseValue2('Motinos  Nr.:', AHTML);
+  gloLivestock.Passport := ParseValue2('Pasas:', AHTML);
   // gloLivestock.OwnerCode:=ParseValue('Laikytojo kodas:', AHTML);
   // gloLivestock.:=ParseValue('', AHTML);
 
 end;
 
-Function ParseValue(AName, AString: String): String;
+Function ParseValue2(AName, AString: String): String;
 var
   APosition: Integer;
   b1, b2: String;
@@ -341,19 +425,19 @@ begin
   if Trim(AString) = '' then
     Exit;
 
-  APosition := POS(AName, AString);
+  APosition := Pos(AName, AString);
   if APosition = 0 then
     Exit;
   Delete(AString, 1, APosition - 1); // Truncate begining until current string
 
   { Find first <b> }
-  APosition := POS(b1, AString);
+  APosition := Pos(b1, AString);
   if APosition = 0 then
     Exit;
   Delete(AString, 1, APosition + Length(b1) - 1);
 
   { Find last </b> }
-  APosition := POS(b2, AString);
+  APosition := Pos(b2, AString);
   if APosition = 0 then
     Exit;
 
@@ -379,34 +463,52 @@ begin
   Inc(gloCount);
   if gloCount = 3 then
   begin
-    LStream := TStringStream.Create('');
-    try
-      LPersistStreamInit := WB1.Document as IPersistStreamInit;
-      Stream := TStreamAdapter.Create(LStream, soReference);
-      LPersistStreamInit.Save(Stream, True);
-      memResult.Lines.Text := LStream.DataString;
-      ParseHeader(LStream.DataString);
-      memResult.Lines.Add(gloLivestock.Number);
-    finally
-      LStream.Free();
+    { WAY 1 }
+    if Pos(URLCompare1, ShortString(WB1.LocationURL)) > 0 then
+    begin
+      // Not implemented
     end;
 
-  end;
+    { WAY 2 }
+    if Pos(URLCompare2, ShortString(WB1.LocationURL)) > 0 then
+    begin
+      LStream := TStringStream.Create('');
+      try
+        LPersistStreamInit := WB1.Document as IPersistStreamInit;
+        Stream := TStreamAdapter.Create(LStream, soReference);
+        LPersistStreamInit.Save(Stream, True);
+        memResult.Lines.Text := LStream.DataString;
+        ParseHeader2(LStream.DataString);
 
+        memResult.Lines.Add(gloLivestock.Number);
+        memResult.Lines.Add(gloLivestock.Species);
+        memResult.Lines.Add(gloLivestock.Gender);
+        memResult.Lines.Add(gloLivestock.Breed);
+        memResult.Lines.Add(gloLivestock.DateOfBirth);
+        memResult.Lines.Add(gloLivestock.MotherNumber);
+        memResult.Lines.Add(gloLivestock.Passport);
+
+        NavigateDetail2(LStream.DataString);
+
+      finally
+        LStream.Free();
+      end;
+    end;
+  end;
 end;
 
 function StripHTML(S: string): string;
 var
   TagBegin, TagEnd, TagLength: Integer;
 begin
-  TagBegin := POS('<', S); // search position of first <
+  TagBegin := Pos('<', S); // search position of first <
 
   while (TagBegin > 0) do
   begin // while there is a < in S
-    TagEnd := POS('>', S); // find the matching >
+    TagEnd := Pos('>', S); // find the matching >
     TagLength := TagEnd - TagBegin + 1;
     Delete(S, TagBegin, TagLength); // delete the tag
-    TagBegin := POS('<', S); // search for next <
+    TagBegin := Pos('<', S); // search for next <
   end;
 
   Result := S; // give the result
