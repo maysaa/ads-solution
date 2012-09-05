@@ -77,7 +77,7 @@ object frmMain: TfrmMain
       Height = 21
       Anchors = [akTop, akRight]
       TabOrder = 0
-      Text = 'LT0000'
+      Text = 'LT000005816835'
     end
     object btnSubmit: TButton
       Left = 677
