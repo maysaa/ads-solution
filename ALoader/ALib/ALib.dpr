@@ -23,5 +23,5 @@ Exports GetData, Debug, Test;
 
 begin
   frmMain := TfrmMain.Create(nil);
-  ShowMessage ('Start');
+  //ShowMessage ('Start');
 end.

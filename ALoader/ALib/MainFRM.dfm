@@ -23,7 +23,6 @@ object frmMain: TfrmMain
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 674
     DesignSize = (
       759
       41)
@@ -79,18 +78,16 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       TabOrder = 0
       Text = 'LT0000'
-      ExplicitLeft = 465
     end
     object btnSubmit: TButton
       Left = 677
-      Top = 6
+      Top = 10
       Width = 75
       Height = 25
       Anchors = [akRight]
       Caption = 'Submit'
       TabOrder = 1
       OnClick = btnSubmitClick
-      ExplicitLeft = 592
     end
     object txtUser: TEdit
       Left = 224
@@ -100,7 +97,6 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       TabOrder = 2
       Text = 'VG0344'
-      ExplicitLeft = 139
     end
     object txtpassword: TEdit
       Left = 355
@@ -111,7 +107,6 @@ object frmMain: TfrmMain
       PasswordChar = '*'
       TabOrder = 3
       Text = 'DMANT_3K'
-      ExplicitLeft = 270
     end
     object CheckBox1: TCheckBox
       Left = 451
@@ -121,7 +116,6 @@ object frmMain: TfrmMain
       Anchors = [akTop, akRight]
       TabOrder = 4
       OnClick = CheckBox1Click
-      ExplicitLeft = 366
     end
     object txtCompany: TEdit
       Left = 71
@@ -141,22 +135,16 @@ object frmMain: TfrmMain
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 674
-    ExplicitHeight = 384
     object PageControl1: TPageControl
       Left = 0
       Top = 0
       Width = 759
       Height = 431
-      ActivePage = TabSheet2
+      ActivePage = TabSheet1
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 674
-      ExplicitHeight = 384
       object TabSheet1: TTabSheet
         Caption = 'Browser'
-        ExplicitWidth = 666
-        ExplicitHeight = 356
         object WB1: TEmbeddedWB
           Left = 0
           Top = 0
@@ -164,7 +152,8 @@ object frmMain: TfrmMain
           Height = 403
           Align = alClient
           TabOrder = 0
-          Silent = False
+          RegisterAsBrowser = True
+          OnDocumentComplete = WB1DocumentComplete
           DisableCtrlShortcuts = 'N'
           UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
           OnAuthenticate = WB1Authenticate
@@ -174,10 +163,7 @@ object frmMain: TfrmMain
             '<HTML></HTML>')
           PrintOptions.Footer = '&u&b&d'
           PrintOptions.Orientation = poPortrait
-          ExplicitLeft = 120
-          ExplicitTop = 80
-          ExplicitWidth = 300
-          ExplicitHeight = 150
+          ExplicitTop = -2
           ControlData = {
             4C000000D5440000CB2400000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -189,15 +175,12 @@ object frmMain: TfrmMain
       object TabSheet2: TTabSheet
         Caption = 'Result'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 32
-        object Memo1: TMemo
-          Left = 29
-          Top = 24
-          Width = 652
-          Height = 329
-          Lines.Strings = (
-            'Memo1')
+        object memResult: TMemo
+          Left = 0
+          Top = 0
+          Width = 751
+          Height = 403
+          Align = alClient
           ScrollBars = ssBoth
           TabOrder = 0
         end
@@ -216,8 +199,5 @@ object frmMain: TfrmMain
       item
         Width = 500
       end>
-    ExplicitLeft = 552
-    ExplicitTop = 480
-    ExplicitWidth = 0
   end
 end
