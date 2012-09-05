@@ -5,18 +5,18 @@ interface
 uses
   FastMM4, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.OleCtrls, SHDocVw_EWB, EwbCore, EmbeddedWB, Vcl.ComCtrls,
-  MSHTML_EWB;
+  MSHTML_EWB, Winapi.ActiveX;
 
 Type
   TAnimal = record
     Number: String; // Gyvulio numeris:
     Species: String; // Rûðis:
-    Gender: String; // Lytis
+    Gender: String; // Lytis:
     Breed: String; // Veislë:
-    DateOfBirth: String; // Gimimo  data:
+    DateOfBirth: String; // Gimimo data:
     MotherNumber: String; // Motinos  Nr.:
-    Passport: String; // Pasas
-    OwnerCode: String; // Laikytojo kodas
+    Passport: String; // Pasas:
+    OwnerCode: String; // Laikytojo kodas:
     OwnerName: String; // Laikytojo vardas:
     HerdCode: String; // Bandos kodas:
     HerdAddress: String; // Bandos adresas:
@@ -42,7 +42,7 @@ type
     lblCompany: TLabel;
     txtCompany: TEdit;
     StatusBar1: TStatusBar;
-    Memo1: TMemo;
+    memResult: TMemo;
     procedure btnSubmitClick(Sender: TObject);
     function Get1(ANumber: String): Boolean;
     function Get2(ANumber: String): Boolean;
@@ -50,6 +50,7 @@ type
     procedure WB1Authenticate(Sender: TCustomEmbeddedWB; var hwnd: hwnd; var szUserName, szPassWord: WideString; var Rezult: HRESULT);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Button1Click(Sender: TObject);
+    procedure WB1DocumentComplete(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
 
   private
     { Private declarations }
@@ -57,10 +58,11 @@ type
     { Public declarations }
   end;
 
-Function GetData(AUser, APassword: PChar): Boolean; Export;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean; Export;
 Procedure Debug(); Export;
 Function Test(a: PChar): Boolean; Export;
-Function ParseHeader(AHTML: TStrings): Boolean;
+Function ParseHeader(AHTML: String): Boolean;
+Function ParseValue(AName, AString: String): String;
 function StripHTML(S: string): string;
 
 var
@@ -68,21 +70,24 @@ var
   gloUser: String = 'VG0344';
   gloPsw: String = 'DMANT_3K';
   gloLivestock: TAnimal;
+  gloHTML: String = '';
+  gloCount: Integer;
 
 implementation
 
 Function Test(a: PChar): Boolean;
 begin
   Result := True;
-  ShowMessage('Test');
+  //ShowMessage('Test');
 end;
 
-Function GetData(AUser, APassword: PChar): Boolean;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean;
 begin
+  gloCount := 0;
   AUser := StrAlloc(MAX_PATH);
   APassword := StrAlloc(MAX_PATH);
 
-  ShowMessage('GetData start ' + IntToStr(Length(AUser)));
+  //ShowMessage('GetData start ' + IntToStr(Length(AUser)));
   Result := False;
 
   if Trim(AUser) <> '' then
@@ -96,7 +101,7 @@ begin
 
   frmMain.Get1('LT000005816831');
 
-  ShowMessage('GetData end');
+  //ShowMessage('GetData end');
   StrDispose(AUser);
   StrDispose(APassword);
 end;
@@ -121,21 +126,27 @@ var
   i: Integer;
 begin
   Get2('LT000006042643');
-  ShowMessage('before parse');
 
-  doc := WB1.Document as IHTMLDocument2;
+  // ShowMessage('before parse');
 
-  iall := doc.body;
+//  doc := WB1.Document as IHTMLDocument2;
+//
+//  iall := doc.body;
+//
+//  while iall.parentElement <> nil do
+//  begin
+//    iall := iall.parentElement;
+//  end;
 
-  while iall.parentElement <> nil do
-  begin
-    iall := iall.parentElement;
-  end;
+  //ParseHeader(iall.outerHTML);
 
-  Memo1.Text := iall.outerHTML;
+  // memResult.Lines.Add(iall.outerHTML);
 
-  ParseHeader(Memo1.Lines);
-
+  // // Memo1.Text := iall.outerHTML;
+  // //
+  // // ParseHeader(Memo1.Lines);
+  //
+  // memResult.Lines.Add(gloLivestock.Number);
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -190,7 +201,7 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  ShowMessage('Close');
+  //ShowMessage('Close');
 end;
 
 function TfrmMain.Get1(ANumber: String): Boolean;
@@ -292,49 +303,96 @@ begin
 
 end;
 
-function ParseHeader(AHTML: TStrings): Boolean;
+function ParseHeader(AHTML: String): Boolean;
 var
   S: String;
-  i, APosition: Integer;
+  i, APosition, AStart, AEnd: Integer;
   html: TStrings;
 begin
   Result := False;
 
-  if AHTML.Count = 0 then
+  if Trim(AHTML) = '' then
     Exit;
 
-  try
+  gloLivestock.Number := ParseValue('Gyvulio numeris:', AHTML);
+  gloLivestock.Species := ParseValue('Rûðis:', AHTML);
+  gloLivestock.Gender := ParseValue('Lytis:', AHTML);
+  gloLivestock.Breed := ParseValue('Veislë:', AHTML);
+  gloLivestock.DateOfBirth := ParseValue('Gimimo data:', AHTML);
+  gloLivestock.MotherNumber := ParseValue('Motinos  Nr.:', AHTML);
+  gloLivestock.Passport := ParseValue('Pasas:', AHTML);
+  // gloLivestock.OwnerCode:=ParseValue('Laikytojo kodas:', AHTML);
+  // gloLivestock.:=ParseValue('', AHTML);
 
-    html := TStrings.Create;
-    html:= AHTML;
+end;
 
-    // Main loop
-    for i := 0 to html.Count - 1 do
-    begin
-      S := html[i];
+Function ParseValue(AName, AString: String): String;
+var
+  APosition: Integer;
+  b1, b2: String;
+begin
+  b1 := '<b>';
+  b2 := '</b>';
+  Result := '';
 
-      // Gyvulio numeris:
-      APosition := POS('Gyvulio numeris:', S);
-      if APosition > 0 then
-      begin
-        S := StripHTML(S);
-        Delete(S, APosition, 16);
-        gloLivestock.Number := Trim(S);
-        ShowMessage(gloLivestock.Number);
-      end
-      else
-        gloLivestock.Number := '';
+  if Trim(AName) = '' then
+    Exit;
 
-    end;
-  finally
-    html.Free;
-  end;
+  if Trim(AString) = '' then
+    Exit;
+
+  APosition := POS(AName, AString);
+  if APosition = 0 then
+    Exit;
+  Delete(AString, 1, APosition - 1); // Truncate begining until current string
+
+  { Find first <b> }
+  APosition := POS(b1, AString);
+  if APosition = 0 then
+    Exit;
+  Delete(AString, 1, APosition + Length(b1) - 1);
+
+  { Find last </b> }
+  APosition := POS(b2, AString);
+  if APosition = 0 then
+    Exit;
+
+  Delete(AString, APosition, Length(AString) - APosition + 1);
+  Result := Trim(AString);
+  Exit;
+
+  // TODO: for best performace can be implemented function with result as left string for next searh
 end;
 
 procedure TfrmMain.WB1Authenticate(Sender: TCustomEmbeddedWB; var hwnd: hwnd; var szUserName, szPassWord: WideString; var Rezult: HRESULT);
 begin
   szUserName := gloUser;
   szPassWord := gloPsw;
+end;
+
+procedure TfrmMain.WB1DocumentComplete(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
+var
+  LStream: TStringStream;
+  Stream: IStream;
+  LPersistStreamInit: IPersistStreamInit;
+begin
+  Inc(gloCount);
+  if gloCount = 3 then
+  begin
+    LStream := TStringStream.Create('');
+    try
+      LPersistStreamInit := WB1.Document as IPersistStreamInit;
+      Stream := TStreamAdapter.Create(LStream, soReference);
+      LPersistStreamInit.Save(Stream, True);
+      memResult.Lines.Text := LStream.DataString;
+      ParseHeader(LStream.DataString);
+      memResult.Lines.Add(gloLivestock.Number);
+    finally
+      LStream.Free();
+    end;
+
+  end;
+
 end;
 
 function StripHTML(S: string): string;
