@@ -15,6 +15,7 @@ uses
   System.SysUtils,
   System.Classes,
   Dialogs,
+  ActiveX,
   MainFRM in 'MainFRM.pas' {frmMain};
 
 {$R *.res}
@@ -22,6 +23,13 @@ uses
 Exports GetData, Debug, Test;
 
 begin
-  frmMain := TfrmMain.Create(nil);
-  //ShowMessage ('Start');
+  try
+    CoInitialize(nil);
+
+    frmMain := TfrmMain.Create(nil);
+    //frmMain.ShowModal;
+  finally
+    CoUninitialize;
+  end;
+
 end.

@@ -9,6 +9,9 @@
 			<Projects Include="ALoader.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="ALib\DLL_Loader\DLL_Loader.dproj">
+				<Dependencies/>
+			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
 		<Target Name="ALoader:Make">
 			<MSBuild Projects="ALoader.dproj" Targets="Make"/>
 		</Target>
+		<Target Name="DLL_Loader">
+			<MSBuild Projects="ALib\DLL_Loader\DLL_Loader.dproj"/>
+		</Target>
+		<Target Name="DLL_Loader:Clean">
+			<MSBuild Projects="ALib\DLL_Loader\DLL_Loader.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="DLL_Loader:Make">
+			<MSBuild Projects="ALib\DLL_Loader\DLL_Loader.dproj" Targets="Make"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="ALib;ALoader"/>
+			<CallTarget Targets="ALib;ALoader;DLL_Loader"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="ALib:Clean;ALoader:Clean"/>
+			<CallTarget Targets="ALib:Clean;ALoader:Clean;DLL_Loader:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="ALib:Make;ALoader:Make"/>
+			<CallTarget Targets="ALib:Make;ALoader:Make;DLL_Loader:Make"/>
 		</Target>
 		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

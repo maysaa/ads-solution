@@ -69,98 +69,191 @@ object Form1: TForm1
     Top = 16
     Width = 75
     Height = 25
+    Anchors = [akTop]
     Caption = 'Button4'
     TabOrder = 5
     OnClick = Button4Click
   end
-  object Memo1: TMemo
-    Left = 40
-    Top = 57
-    Width = 649
-    Height = 88
-    Lines.Strings = (
-      'Memo1')
-    TabOrder = 6
-  end
-  object WB1: TEmbeddedWB
-    Left = 8
-    Top = 165
-    Width = 802
-    Height = 359
-    Anchors = [akLeft, akTop, akRight, akBottom]
-    TabOrder = 7
-    DisableCtrlShortcuts = 'N'
-    UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
-    OnShowMessage = WB1ShowMessage
-    OnAuthenticate = WB1Authenticate
-    OnPreRefresh = WB1PreRefresh
-    About = ' EmbeddedWB http://bsalsa.com/'
-    OnShowDialog = WB1ShowDialog
-    PrintOptions.HTMLHeader.Strings = (
-      '<HTML></HTML>')
-    PrintOptions.Orientation = poPortrait
-    ControlData = {
-      4C000000E45200001B2500000000000000000000000000000000000000000000
-      000000004C000000000000000000000001000000E0D057007335CF11AE690800
-      2B2E12620A000000000000004C0000000114020000000000C000000000000046
-      8000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000100000000000000000000000000000000000000}
-  end
   object Button5: TButton
     Left = 735
-    Top = 72
+    Top = 26
     Width = 75
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = 'Button5'
-    TabOrder = 8
+    TabOrder = 6
     OnClick = Button5Click
-  end
-  object WebBrowser1: TWebBrowser
-    Left = 8
-    Top = 72
-    Width = 706
-    Height = 56
-    TabOrder = 9
-    ControlData = {
-      4C000000F8480000CA0500000000000000000000000000000000000000000000
-      000000004C000000000000000000000001000000E0D057007335CF11AE690800
-      2B2E126208000000000000004C0000000114020000000000C000000000000046
-      8000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000100000000000000000000000000000000000000}
   end
   object Button6: TButton
     Left = 735
-    Top = 103
+    Top = 57
     Width = 75
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = 'Button6'
-    TabOrder = 10
+    TabOrder = 7
     OnClick = Button6Click
   end
   object Button7: TButton
     Left = 735
-    Top = 134
+    Top = 88
     Width = 75
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = 'Button7'
-    TabOrder = 11
+    TabOrder = 8
     OnClick = Button7Click
   end
-  object EwbC1: TEwbCore
+  object Button8: TButton
+    Left = 735
+    Top = 119
+    Width = 75
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Button8'
+    TabOrder = 9
+    OnClick = Button8Click
+  end
+  object Button9: TButton
+    Left = 735
+    Top = 144
+    Width = 75
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Button9'
+    TabOrder = 10
+    OnClick = Button9Click
+  end
+  object PageControl1: TPageControl
     Left = 8
-    Top = 134
+    Top = 57
     Width = 721
-    Height = 71
+    Height = 312
+    ActivePage = TabSheet1
     Anchors = [akLeft, akTop, akRight, akBottom]
+    TabOrder = 11
+    object TabSheet1: TTabSheet
+      Caption = 'TabSheet1'
+      DesignSize = (
+        713
+        284)
+      object WB1: TEmbeddedWB
+        Left = -268
+        Top = -24
+        Width = 1234
+        Height = 478
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        TabOrder = 0
+        DisableCtrlShortcuts = 'N'
+        UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
+        OnShowMessage = WB1ShowMessage
+        OnAuthenticate = WB1Authenticate
+        OnPreRefresh = WB1PreRefresh
+        About = ' EmbeddedWB http://bsalsa.com/'
+        OnShowDialog = WB1ShowDialog
+        PrintOptions.Header = '&w&bPage &p of &P'
+        PrintOptions.HTMLHeader.Strings = (
+          '<HTML></HTML>')
+        PrintOptions.Footer = '&u&b&d'
+        PrintOptions.Orientation = poPortrait
+        ControlData = {
+          4C000000E45200001B2500000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E12620A000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'TabSheet2'
+      ImageIndex = 1
+      object WebBrowser1: TWebBrowser
+        Left = -529
+        Top = 109
+        Width = 810
+        Height = 56
+        TabOrder = 0
+        ControlData = {
+          4C000000B7530000CA0500000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'TabSheet3'
+      ImageIndex = 2
+      object Memo1: TMemo
+        Left = 0
+        Top = 0
+        Width = 713
+        Height = 284
+        Align = alClient
+        Lines.Strings = (
+          'Memo1')
+        ScrollBars = ssBoth
+        TabOrder = 0
+      end
+    end
+    object TabSheet4: TTabSheet
+      Caption = 'TabSheet4'
+      ImageIndex = 3
+      object EwbC1: TEwbCore
+        Left = 64
+        Top = 38
+        Width = 369
+        Height = 171
+        TabOrder = 0
+        UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
+        ControlData = {
+          4C00000023260000AC1100000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+    object TabSheet5: TTabSheet
+      Caption = 'TabSheet5'
+      ImageIndex = 4
+      object WebBrowser2: TWebBrowser
+        Left = 0
+        Top = 0
+        Width = 713
+        Height = 284
+        Align = alClient
+        TabOrder = 0
+        ExplicitWidth = 300
+        ExplicitHeight = 150
+        ControlData = {
+          4C000000B14900005A1D00000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E12620A000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+  end
+  object Button10: TButton
+    Left = 735
+    Top = 175
+    Width = 75
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Button10'
     TabOrder = 12
-    UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
-    OnAuthenticate = EwbC1Authenticate
-    ControlData = {
-      4C000000844A0000570700000000000000000000000000000000000000000000
-      000000004C000000000000000000000001000000E0D057007335CF11AE690800
-      2B2E126208000000000000004C0000000114020000000000C000000000000046
-      8000000000000000000000000000000000000000000000000000000000000000
-      00000000000000000100000000000000000000000000000000000000}
+    OnClick = Button10Click
+  end
+  object Button11: TButton
+    Left = 735
+    Top = 206
+    Width = 75
+    Height = 25
+    Anchors = [akTop, akRight]
+    Caption = 'Button11'
+    TabOrder = 13
+    OnClick = Button11Click
   end
   object IdHTTP1: TIdHTTP
     IOHandler = IdSSLIOHandlerSocketOpenSSL1
@@ -206,10 +299,5 @@ object Form1: TForm1
     UrlPolicy.Scripts = Allow
     Left = 760
     Top = 24
-  end
-  object HtmlListener1: THtmlListener
-    Handlers = <>
-    Left = 656
-    Top = 152
   end
 end
