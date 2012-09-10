@@ -52,6 +52,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure WB1DocumentComplete(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
     function NavigateDetail2(AHTML: String): Boolean;
+    procedure FormCreate(Sender: TObject);
 
   private
     { Private declarations }
@@ -59,9 +60,9 @@ type
     { Public declarations }
   end;
 
-Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean; Export;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber: WideString): Boolean; Export;
 Procedure Debug(); Export;
-Function Test(a: PChar): Boolean; Export;
+Function Test(out a: WideString): Boolean; Export;
 Function ParseHeader2(AHTML: String): Boolean;
 Function ParseValue2(AName, AString: String): String;
 function StripHTML(S: string): string;
@@ -74,27 +75,34 @@ Const
   URLCompare1 = 'https://www.vic.lt:8102/pls/gris/kl_main.pirmas';
   URLCompare2 = 'https://www.vic.lt:8102/pls/gris/ataskaitos';
 
+  URLMain = 'https://www.vic.lt:8102/pls/gris/';
+
 var
   frmMain: TfrmMain;
   gloUser: String = 'VG0344';
   gloPsw: String = 'DMANT_3K';
   gloLivestock: TAnimal;
   gloHTML: String = '';
-  gloCount: Integer;
+  gloCount, gloCount1: Integer;
   gloCompany: String;
   gloSearchNumber: String;
 
 implementation
 
-Function Test(a: PChar): Boolean;
+Function Test(out a: WideString): Boolean;
 begin
+  //StrPCopy(a, 'Veikia 1');
+  a:= 'Veikia3';
+
   Result := True;
   // ShowMessage('Test');
 end;
 
-Function GetData(AUser, APassword, ACompany, ASearchNumber: PChar): Boolean;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber: WideString): Boolean;
 begin
+
   gloCount := 0;
+  gloCount1 := 0;
   // AUser := StrAlloc(MAX_PATH);
   // APassword := StrAlloc(MAX_PATH);
   // ACompany := StrAlloc(MAX_PATH);
@@ -124,6 +132,7 @@ begin
   // StrDispose(APassword);
   // StrDispose(ACompany);
   // StrDispose(ASearchNumber);
+        ANumber := WideString('Labas3');
 end;
 
 Procedure Debug();
@@ -138,8 +147,10 @@ end;
 {$R *.dfm}
 
 procedure TfrmMain.btnSubmitClick(Sender: TObject);
+var
+  AResult: WideString;
 begin
-  if not GetData(PChar(txtUser.Text), PChar(txtpassword.Text), PChar(txtCompany.Text), PChar(txtAnimalNo.Text)) then
+  if not GetData(txtUser.Text, txtpassword.Text, txtCompany.Text, txtAnimalNo.Text, AResult) then
     MessageDlg('An error occurs ...', mtError, [mbOK], 0);
 end;
 
@@ -196,6 +207,12 @@ end;
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   // ShowMessage('Close');
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+begin
+//  TOleControl(WB1).Visible := False
+
 end;
 
 function TfrmMain.Get1(ANumber: String): Boolean;
@@ -308,6 +325,7 @@ var
   ATableStart, ATableEnd, ATR1, ATR2, AString: String;
   APosition, APosition2: Integer;
   ATable: TStringList;
+  i: Integer;
 begin
   Result := False;
 
@@ -358,7 +376,7 @@ begin
       Exit;
     Delete(AHTML, 1, APosition + Length(ATR1));
 
-     APosition := Pos(ATR1, AHTML);
+    APosition := Pos(ATR1, AHTML);
     if APosition = 0 then
       Exit;
     Delete(AHTML, 1, APosition + Length(ATR1));
@@ -369,17 +387,43 @@ begin
 
     while APosition <> 0 do
     begin
-      APosition2:= Pos (ATR2, AHTML);//Search </TR
-          AString:= AHTML;
-      APosition:= Pos(ATR2, AString);
+      APosition2 := Pos(ATR2, AHTML); // Search </TR
+      AString := AHTML;
+      APosition := Pos(ATR2, AString);
 
-      Delete(AString, APosition,  Length(AString)- APosition);
+      Delete(AString, APosition, Length(AString) - APosition);
       ATable.Add(Trim(AString));
-      delete(AHTML, 1, APosition2 + Length(ATR1)+ Length(ATR2)+1);
-      APosition:= POS(ATR2, AHTML);
+      Delete(AHTML, 1, APosition2 + Length(ATR1) + Length(ATR2) + 1);
+      APosition := Pos(ATR2, AHTML);
     end;
 
+    AString := '';
 
+    for i := ATable.Count - 1 downto 0 do
+    begin
+      APosition := Pos(gloCompany, ATable[i]);
+      if APosition = 0 then
+      begin
+        AString := ATable[i];
+        APosition := Pos('href="', AString);
+        Delete(AString, 1, APosition + 5);
+        APosition := Pos('"><', AString);
+        Delete(AString, APosition, Length(AString) - APosition + 3);
+        Break;
+      end;
+    end;
+
+    if Trim(AString) = '' then
+      Exit;
+
+    { Open page and wait }
+
+
+
+    // gloLivestock.OwnerCode := ParseValue2('Laikytojo kodas:', WB2.DocumentSource);
+    // gloLivestock.OwnerName := ParseValue2('Laikytojo vardas:', WB2.DocumentSource);
+    // gloLivestock.HerdCode := ParseValue2('Bandos kodas:', WB2.DocumentSource);
+    // gloLivestock.HerdAddress := ParseValue2('Bandos adresas:', WB2.DocumentSource);
 
     Result := True;
   finally
@@ -431,19 +475,18 @@ begin
   Delete(AString, 1, APosition - 1); // Truncate begining until current string
 
   { Find first <b> }
-  APosition := Pos(b1, AString);
+  APosition := Pos(UpperCase(b1), UpperCase(AString));
   if APosition = 0 then
     Exit;
   Delete(AString, 1, APosition + Length(b1) - 1);
 
   { Find last </b> }
-  APosition := Pos(b2, AString);
+  APosition := Pos(UpperCase(b2), UpperCase(AString));
   if APosition = 0 then
     Exit;
 
   Delete(AString, APosition, Length(AString) - APosition + 1);
   Result := Trim(AString);
-  Exit;
 
   // TODO: for best performace can be implemented function with result as left string for next searh
 end;
@@ -461,23 +504,24 @@ var
   LPersistStreamInit: IPersistStreamInit;
 begin
   Inc(gloCount);
-  if gloCount = 3 then
-  begin
-    { WAY 1 }
-    if Pos(URLCompare1, ShortString(WB1.LocationURL)) > 0 then
+  try
+    LStream := TStringStream.Create('');
+    if gloCount = 3 then
     begin
-      // Not implemented
-    end;
+      { WAY 1 }
+      if Pos(URLCompare1, ShortString(WB1.LocationURL)) > 0 then
+      begin
+        // Not implemented
+      end;
 
-    { WAY 2 }
-    if Pos(URLCompare2, ShortString(WB1.LocationURL)) > 0 then
-    begin
-      LStream := TStringStream.Create('');
-      try
+      { WAY 2 }
+      if Pos(URLCompare2, ShortString(WB1.LocationURL)) > 0 then
+      begin
+
         LPersistStreamInit := WB1.Document as IPersistStreamInit;
         Stream := TStreamAdapter.Create(LStream, soReference);
         LPersistStreamInit.Save(Stream, True);
-        memResult.Lines.Text := LStream.DataString;
+        // memResult.Lines.Text := LStream.DataString;//Laikina
         ParseHeader2(LStream.DataString);
 
         memResult.Lines.Add(gloLivestock.Number);
@@ -490,10 +534,35 @@ begin
 
         NavigateDetail2(LStream.DataString);
 
-      finally
-        LStream.Free();
+        // MOVED to WB2
+        // memResult.Lines.Add(gloLivestock.OwnerCode);
+        // memResult.Lines.Add(gloLivestock.OwnerName);
+        // memResult.Lines.Add(gloLivestock.HerdCode);
+        // memResult.Lines.Add(gloLivestock.HerdAddress);
       end;
     end;
+    if gloCount = 5 then
+    begin
+      // { WAY 1 }
+      // if Pos(URLCompare1, ShortString(WB1.LocationURL)) > 0 then
+      // begin
+      // // Not implemented
+      // end;
+      //
+      // { WAY 2 }
+      // if Pos(URLCompare2, ShortString(WB1.LocationURL)) > 0 then
+      // begin
+      // LPersistStreamInit := WB1.Document as IPersistStreamInit;
+      // Stream := TStreamAdapter.Create(LStream, soReference);
+      // LPersistStreamInit.Save(Stream, True);
+      // //memResult.Lines.Text := LStream.DataString;
+      //
+      // gloLivestock.OwnerCode := ParseValue2('Laikytojo kodas:', LStream.DataString);
+      // memResult.Lines.Add(gloLivestock.OwnerCode);
+      // end;
+    end;
+  finally
+    LStream.Free();
   end;
 end;
 

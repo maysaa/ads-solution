@@ -13,6 +13,7 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
@@ -144,14 +145,14 @@ object frmMain: TfrmMain
       Align = alClient
       TabOrder = 0
       object TabSheet1: TTabSheet
-        Caption = 'Browser'
+        Caption = 'Browser1'
         object WB1: TEmbeddedWB
           Left = 0
           Top = 0
-          Width = 751
-          Height = 403
-          Align = alClient
+          Width = 0
+          Height = 0
           TabOrder = 0
+          Silent = False
           RegisterAsBrowser = True
           OnDocumentComplete = WB1DocumentComplete
           DisableCtrlShortcuts = 'N'
@@ -163,7 +164,6 @@ object frmMain: TfrmMain
             '<HTML></HTML>')
           PrintOptions.Footer = '&u&b&d'
           PrintOptions.Orientation = poPortrait
-          ExplicitTop = -2
           ControlData = {
             4C000000D5440000CB2400000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800

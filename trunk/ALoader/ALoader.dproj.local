@@ -3,11 +3,11 @@
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.838,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.645,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.244,D:\DEV\ADS\trunk\ALoader\ALoader.dproj=C:\Users\User\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.270,C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas=D:\DEV\ADS\trunk\ALoader\MainFRM.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.518,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.270,C:\Users\User\Documents\RAD Studio\Projects\Unit1.dfm=D:\DEV\ADS\trunk\ALoader\MainFRM.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.747,=D:\DEV\ADS\trunk\ALoader\WBUtil.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.270,D:\DEV\ADS\trunk\ALoader\MainFRM.dfm=C:\Users\User\Documents\RAD Studio\Projects\Unit1.dfm</Transaction>
     <Transaction>1899.12.30 00:00:00.000.153,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.270,D:\DEV\ADS\trunk\ALoader\MainFRM.pas=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.244,C:\Users\User\Documents\RAD Studio\Projects\Project1.dproj=D:\DEV\ADS\trunk\ALoader\ALoader.dproj</Transaction>
   </Transactions>
 </BorlandProject>
