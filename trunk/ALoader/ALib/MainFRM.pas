@@ -132,7 +132,8 @@ begin
   // StrDispose(APassword);
   // StrDispose(ACompany);
   // StrDispose(ASearchNumber);
-        ANumber := WideString('Labas3');
+        ANumber := WideString('Labas4');
+        frmMain.Free;
 end;
 
 Procedure Debug();
@@ -206,6 +207,7 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+Action:= caFree;
   // ShowMessage('Close');
 end;
 
