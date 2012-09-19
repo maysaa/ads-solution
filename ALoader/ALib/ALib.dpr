@@ -22,6 +22,8 @@ uses
 
 Exports GetData, Debug, Test;
 
+
+
 begin
   try
     CoInitialize(nil);
@@ -29,7 +31,5 @@ begin
     frmMain := TfrmMain.Create(nil);
     //frmMain.ShowModal;
   finally
-    CoUninitialize;
-  end;
-
+end;
 end.
