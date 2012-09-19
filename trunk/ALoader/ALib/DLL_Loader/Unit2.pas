@@ -46,12 +46,12 @@ begin
       ShowMessage(a);
     end
     else
-      ShowMessage('"CircleArea" function not found');
+      ShowMessage('"GetData" function not found');
     FreeLibrary(dllHandle);
   end
   else
   begin
-    ShowMessage('circle.dll not found / not loaded');
+    ShowMessage('ALib.dll not found / not loaded');
   end;
 //   FreeMem(aResult, 10);
 end;

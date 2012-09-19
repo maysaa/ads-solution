@@ -91,8 +91,8 @@ implementation
 
 Function Test(out a: WideString): Boolean;
 begin
-  //StrPCopy(a, 'Veikia 1');
-  a:= 'Veikia3';
+  // StrPCopy(a, 'Veikia 1');
+  a := 'Veikia3';
 
   Result := True;
   // ShowMessage('Test');
@@ -132,8 +132,9 @@ begin
   // StrDispose(APassword);
   // StrDispose(ACompany);
   // StrDispose(ASearchNumber);
-        ANumber := WideString('Labas4');
-        frmMain.Free;
+  ANumber := WideString('Labas4');
+  // Laikina
+  // frmMain.Free;
 end;
 
 Procedure Debug();
@@ -207,13 +208,13 @@ end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-Action:= caFree;
+  Action := caFree;
   // ShowMessage('Close');
 end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
-//  TOleControl(WB1).Visible := False
+  // TOleControl(WB1).Visible := False
 
 end;
 
@@ -584,5 +585,12 @@ begin
 
   Result := S; // give the result
 end;
+
+initialization
+
+finalization
+
+CoUninitialize;
+frmMain.Free;
 
 end.
