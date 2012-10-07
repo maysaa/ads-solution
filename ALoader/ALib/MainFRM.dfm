@@ -149,11 +149,12 @@ object frmMain: TfrmMain
         object WB1: TEmbeddedWB
           Left = 0
           Top = 0
-          Width = 0
-          Height = 0
+          Width = 751
+          Height = 403
+          Align = alClient
           TabOrder = 0
-          Silent = False
           RegisterAsBrowser = True
+          OnNavigateComplete2 = WB1NavigateComplete2
           OnDocumentComplete = WB1DocumentComplete
           DisableCtrlShortcuts = 'N'
           UserInterfaceOptions = [EnablesFormsAutoComplete, EnableThemes]
@@ -164,6 +165,8 @@ object frmMain: TfrmMain
             '<HTML></HTML>')
           PrintOptions.Footer = '&u&b&d'
           PrintOptions.Orientation = poPortrait
+          ExplicitWidth = 100
+          ExplicitHeight = 100
           ControlData = {
             4C000000D5440000CB2400000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
