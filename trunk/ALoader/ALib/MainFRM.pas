@@ -5,7 +5,7 @@ interface
 uses
   FastMM4, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.OleCtrls, SHDocVw_EWB, EwbCore, EmbeddedWB, Vcl.ComCtrls,
-  MSHTML_EWB, Winapi.ActiveX;
+  MSHTML_EWB, Winapi.ActiveX, IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP, IdSSLOpenSSL;
 
 Type
   TAnimal = record
@@ -43,6 +43,7 @@ type
     txtCompany: TEdit;
     StatusBar1: TStatusBar;
     memResult: TMemo;
+    ProgressBar1: TProgressBar;
     procedure btnSubmitClick(Sender: TObject);
     function Get1(ANumber: String): Boolean;
     function Get2(ANumber: String): Boolean;
@@ -53,6 +54,7 @@ type
     procedure WB1DocumentComplete(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
     function NavigateDetail2(AHTML: String): Boolean;
     procedure FormCreate(Sender: TObject);
+    procedure WB1NavigateComplete2(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
 
   private
     { Private declarations }
@@ -86,6 +88,7 @@ var
   gloCount, gloCount1: Integer;
   gloCompany: String;
   gloSearchNumber: String;
+  gloExecuting: Boolean;
 
 implementation
 
@@ -100,41 +103,60 @@ end;
 
 Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber: WideString): Boolean;
 begin
+  //Laikina
+  if assigned(frmMain) then
+  begin
+    frmMain.WindowState := wsMaximized;
+    frmMain.Show;
+  end;
 
-  gloCount := 0;
-  gloCount1 := 0;
-  // AUser := StrAlloc(MAX_PATH);
-  // APassword := StrAlloc(MAX_PATH);
-  // ACompany := StrAlloc(MAX_PATH);
-  // ASearchNumber := StrAlloc(MAX_PATH);
+  gloExecuting := True;
+  try
 
-  Result := False;
+    gloCount := 0;
+    gloCount1 := 0;
+    // AUser := StrAlloc(MAX_PATH);
+    // APassword := StrAlloc(MAX_PATH);
+    // ACompany := StrAlloc(MAX_PATH);
+    // ASearchNumber := StrAlloc(MAX_PATH);
 
-  if Trim(AUser) <> '' then
-    gloUser := AUser;
+    Result := False;
 
-  if Trim(APassword) <> '' then
-    gloPsw := APassword;
+    if Trim(AUser) <> '' then
+      gloUser := AUser;
 
-  if Trim(ACompany) <> '' then
-    gloCompany := ACompany;
+    if Trim(APassword) <> '' then
+      gloPsw := APassword;
 
-  if Trim(ASearchNumber) <> '' then
-    gloSearchNumber := ASearchNumber;
+    if Trim(ACompany) <> '' then
+      gloCompany := ACompany;
 
-  if not assigned(frmMain) then
-    Exit;
+    if Trim(ASearchNumber) <> '' then
+      gloSearchNumber := ASearchNumber;
 
-  // frmMain.Get1('LT000005816831');
-  Result := frmMain.Get2(gloSearchNumber);
+    if not assigned(frmMain) then
+      Exit;
 
-  // StrDispose(AUser);
-  // StrDispose(APassword);
-  // StrDispose(ACompany);
-  // StrDispose(ASearchNumber);
-  ANumber := WideString('Labas4');
-  // Laikina
-  // frmMain.Free;
+    // frmMain.Get1('LT000005816831');
+    Result := frmMain.Get2(gloSearchNumber);
+
+    // StrDispose(AUser);
+    // StrDispose(APassword);
+    // StrDispose(ACompany);
+    // StrDispose(ASearchNumber);
+     while gloExecuting <> False do
+     begin
+     Application.ProcessMessages;
+     end;
+
+    ANumber := WideString(gloLivestock.Number);
+    // Laikina
+    //frmMain.Close;
+
+  except
+    gloExecuting := False;
+    Abort;
+  end;
 end;
 
 Procedure Debug();
@@ -329,6 +351,9 @@ var
   APosition, APosition2: Integer;
   ATable: TStringList;
   i: Integer;
+  IdHTTP: TIdHTTP;
+  lIOHandler: TIdSSLIOHandlerSocketOpenSSL;
+  AHTMLStream: TStringStream;
 begin
   Result := False;
 
@@ -420,7 +445,42 @@ begin
       Exit;
 
     { Open page and wait }
+    try
+      IdHTTP := TIdHTTP.Create(nil);
+      AHTMLStream := TStringStream.Create;
+      lIOHandler := TIdSSLIOHandlerSocketOpenSSL.Create(nil);
 
+      IdHTTP.IOHandler := lIOHandler;
+      IdHTTP.HandleRedirects := True;
+
+      IdHTTP.ConnectTimeout := 10000;
+      IdHTTP.Request.Clear;
+
+      IdHTTP.Request.BasicAuthentication := True;
+      IdHTTP.Request.Username := gloUser;
+      IdHTTP.Request.Password := gloPsw;
+
+      try
+        IdHTTP.Get(URLMain + AString, AHTMLStream);
+        gloLivestock.OwnerCode := ParseValue2('Laikytojo kodas:', AHTMLStream.DataString);
+        gloLivestock.OwnerName := ParseValue2('Laikytojo vardas:', AHTMLStream.DataString);
+        gloLivestock.HerdCode := ParseValue2('Bandos kodas:', AHTMLStream.DataString);
+        gloLivestock.HerdAddress := ParseValue2('Bandos adresas:', AHTMLStream.DataString);
+        memResult.Lines.Add(gloLivestock.OwnerCode);
+        memResult.Lines.Add(gloLivestock.OwnerName);
+        memResult.Lines.Add(gloLivestock.HerdCode);
+        memResult.Lines.Add(gloLivestock.HerdAddress);
+        gloExecuting := False;
+        // memResult.Lines.Text:= AHTMLStream.DataString;
+      except
+
+      end;
+
+    finally
+      IdHTTP.free;
+      lIOHandler.free;
+      AHTMLStream.free;
+    end;
 
 
     // gloLivestock.OwnerCode := ParseValue2('Laikytojo kodas:', WB2.DocumentSource);
@@ -430,7 +490,7 @@ begin
 
     Result := True;
   finally
-    ATable.Free;
+    ATable.free;
   end;
 end;
 
@@ -565,8 +625,15 @@ begin
       // end;
     end;
   finally
-    LStream.Free();
+    LStream.free();
   end;
+end;
+
+procedure TfrmMain.WB1NavigateComplete2(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
+var
+  a: String;
+begin
+  a := 'a';
 end;
 
 function StripHTML(S: string): string;
@@ -591,6 +658,6 @@ initialization
 finalization
 
 CoUninitialize;
-frmMain.Free;
+frmMain.free;
 
 end.
