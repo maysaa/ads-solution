@@ -25,25 +25,26 @@ Type
 type
   TfrmMain = class(TForm)
     pnlTop: TPanel;
-    lblAnimalNo: TLabel;
-    txtAnimalNo: TEdit;
-    btnSubmit: TButton;
     pnlMain: TPanel;
     PageControl1: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     WB1: TEmbeddedWB;
-    txtUser: TEdit;
-    lblUser: TLabel;
-    lblPassword: TLabel;
-    txtpassword: TEdit;
-    Bevel1: TBevel;
-    CheckBox1: TCheckBox;
+    SB1: TStatusBar;
+    memResult: TMemo;
+    PB1: TProgressBar;
     lblCompany: TLabel;
     txtCompany: TEdit;
-    StatusBar1: TStatusBar;
-    memResult: TMemo;
-    ProgressBar1: TProgressBar;
+    lblUser: TLabel;
+    txtUser: TEdit;
+    lblPassword: TLabel;
+    txtpassword: TEdit;
+    CheckBox1: TCheckBox;
+    Bevel1: TBevel;
+    lblAnimalNo: TLabel;
+    txtAnimalNo: TEdit;
+    btnSubmit: TButton;
+    btnCancel: TButton;
     procedure btnSubmitClick(Sender: TObject);
     function Get1(ANumber: String): Boolean;
     function Get2(ANumber: String): Boolean;
@@ -55,6 +56,7 @@ type
     function NavigateDetail2(AHTML: String): Boolean;
     procedure FormCreate(Sender: TObject);
     procedure WB1NavigateComplete2(ASender: TObject; const pDisp: IDispatch; var URL: OleVariant);
+    procedure btnCancelClick(Sender: TObject);
 
   private
     { Private declarations }
@@ -62,7 +64,7 @@ type
     { Public declarations }
   end;
 
-Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber: WideString): Boolean; Export;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber, ASpecies, AGender, ABreed, ADateOfBirth, AMotherNumber, APassport, AOwnerCode, AOwnerName, AHerdCode, AHerdAddress: WideString): Boolean; Export;
 Procedure Debug(); Export;
 Function Test(out a: WideString): Boolean; Export;
 Function ParseHeader2(AHTML: String): Boolean;
@@ -89,6 +91,7 @@ var
   gloCompany: String;
   gloSearchNumber: String;
   gloExecuting: Boolean;
+  gloAbort: Boolean;
 
 implementation
 
@@ -101,16 +104,19 @@ begin
   // ShowMessage('Test');
 end;
 
-Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber: WideString): Boolean;
+Function GetData(AUser, APassword, ACompany, ASearchNumber: WideString; out ANumber, ASpecies, AGender, ABreed, ADateOfBirth, AMotherNumber, APassport, AOwnerCode, AOwnerName, AHerdCode, AHerdAddress: WideString): Boolean;
 begin
-  //Laikina
+  // Laikina, perkelti i pradzia kazkur
   if assigned(frmMain) then
   begin
-    frmMain.WindowState := wsMaximized;
+     //frmMain.WindowState := wsMaximized;
     frmMain.Show;
   end;
 
+  frmMain.PB1.Position := 0;
+
   gloExecuting := True;
+  gloAbort := False;
   try
 
     gloCount := 0;
@@ -144,18 +150,35 @@ begin
     // StrDispose(APassword);
     // StrDispose(ACompany);
     // StrDispose(ASearchNumber);
-     while gloExecuting <> False do
-     begin
-     Application.ProcessMessages;
-     end;
 
-    ANumber := WideString(gloLivestock.Number);
+    while gloExecuting <> False do
+    begin
+      Application.ProcessMessages;
+    end;
+
+    if gloAbort = True then
+      ANumber := ''
+    else
+    begin
+      frmMain.PB1.Position := 100;
+      ANumber := WideString(gloLivestock.Number);
+      ASpecies:= WideString(gloLivestock.Species);
+      AGender:= WideString(gloLivestock.Gender);
+      ABreed:= WideString(gloLivestock.Breed);
+      ADateOfBirth:= WideString(gloLivestock.DateOfBirth);
+      AMotherNumber:= WideString(gloLivestock.MotherNumber);
+      APassport:= WideString(gloLivestock.Passport);
+      AOwnerCode:= WideString(gloLivestock.OwnerCode);
+      AOwnerName:= WideString(gloLivestock.OwnerName);
+      AHerdCode:= WideString(gloLivestock.HerdCode);
+      AHerdAddress:= WideString(gloLivestock.HerdAddress);
+    end;
     // Laikina
-    //frmMain.Close;
+    // frmMain.Close;
 
   except
     gloExecuting := False;
-    Abort;
+    //Abort;
   end;
 end;
 
@@ -170,12 +193,22 @@ end;
 
 {$R *.dfm}
 
+procedure TfrmMain.btnCancelClick(Sender: TObject);
+begin
+  WB1.Stop;
+  gloExecuting:= False;
+  gloAbort:= True;
+  raise Exception.Create('Error Message');
+  Abort;
+end;
+
 procedure TfrmMain.btnSubmitClick(Sender: TObject);
 var
   AResult: WideString;
 begin
-  if not GetData(txtUser.Text, txtpassword.Text, txtCompany.Text, txtAnimalNo.Text, AResult) then
-    MessageDlg('An error occurs ...', mtError, [mbOK], 0);
+  //Laikina, uzkomentavau, kad nereiktu aprasyti visu parametru
+//  if not GetData(txtUser.Text, txtpassword.Text, txtCompany.Text, txtAnimalNo.Text, AResult) then
+//    MessageDlg('An error occurs ...', mtError, [mbOK], 0);
 end;
 
 procedure TfrmMain.Button1Click(Sender: TObject);
@@ -318,6 +351,9 @@ end;
 
 function TfrmMain.Get2(ANumber: String): Boolean;
 begin
+  if gloExecuting = False then
+    Exit;
+
   Result := False;
   try
 
@@ -326,19 +362,38 @@ begin
     while WB1.ReadyState < READYSTATE_INTERACTIVE do
       Application.ProcessMessages;
 
+    if gloExecuting = False then
+      Exit;
+    frmMain.PB1.Position := 5;
+
     { Open page and wait }
+    SB1.Panels[0].Text:='Navigate';
+
     WB1.Navigate(URL2);
     while WB1.ReadyState < READYSTATE_COMPLETE do
       Application.ProcessMessages;
+    if gloExecuting = False then
+      Exit;
+
+    frmMain.PB1.Position := 10;
 
     { Fill edit with value }
     WB1.OleObject.Document.Forms.item(0).elements.item(0).value := ANumber;
 
+    SB1.Panels[0].Text:='Fill number';
+
+    frmMain.PB1.Position := 15;
+    Application.ProcessMessages;
+
     { Execute Java Script to submit data }
+    SB1.Panels[0].Text:='Execute submit number';
     WB1.ExecScript('document.forma.submit()', 'JavaScript');
     while WB1.ReadyState < READYSTATE_COMPLETE do
       Application.ProcessMessages;
 
+    if gloExecuting = False then
+      Exit;
+    frmMain.PB1.Position := 25;
     Result := True;
   except
 
@@ -359,6 +414,9 @@ begin
 
   try
 
+    if gloExecuting = False then
+      Exit;
+    PB1.Position := 65;
     ATable := TStringList.Create;
 
     if Trim(AHTML) = '' then
@@ -413,6 +471,10 @@ begin
     if APosition = 0 then
       Exit;
 
+    if gloExecuting = False then
+      Exit;
+    PB1.Position := 70;
+
     while APosition <> 0 do
     begin
       APosition2 := Pos(ATR2, AHTML); // Search </TR
@@ -424,6 +486,10 @@ begin
       Delete(AHTML, 1, APosition2 + Length(ATR1) + Length(ATR2) + 1);
       APosition := Pos(ATR2, AHTML);
     end;
+
+    if gloExecuting = False then
+      Exit;
+    PB1.Position := 75;
 
     AString := '';
 
@@ -440,6 +506,10 @@ begin
         Break;
       end;
     end;
+
+    if gloExecuting = False then
+      Exit;
+    PB1.Position := 80;
 
     if Trim(AString) = '' then
       Exit;
@@ -461,7 +531,12 @@ begin
       IdHTTP.Request.Password := gloPsw;
 
       try
+      SB1.Panels[0].Text:='Get ...';
         IdHTTP.Get(URLMain + AString, AHTMLStream);
+      SB1.Panels[0].Text:='After get ...';
+        if gloExecuting = False then
+          Exit;
+        PB1.Position := 90;
         gloLivestock.OwnerCode := ParseValue2('Laikytojo kodas:', AHTMLStream.DataString);
         gloLivestock.OwnerName := ParseValue2('Laikytojo vardas:', AHTMLStream.DataString);
         gloLivestock.HerdCode := ParseValue2('Bandos kodas:', AHTMLStream.DataString);
@@ -475,6 +550,10 @@ begin
       except
 
       end;
+
+      if gloExecuting = False then
+        Exit;
+      PB1.Position := 95;
 
     finally
       IdHTTP.free;
@@ -504,6 +583,8 @@ begin
 
   if Trim(AHTML) = '' then
     Exit;
+
+  frmMain.SB1.Panels[0].Text:='Parsing in details ...';
 
   gloLivestock.Number := ParseValue2('Gyvulio numeris:', AHTML);
   gloLivestock.Species := ParseValue2('Rûðis:', AHTML);
@@ -566,11 +647,30 @@ var
   Stream: IStream;
   LPersistStreamInit: IPersistStreamInit;
 begin
+  Application.ProcessMessages;
   Inc(gloCount);
+  if gloExecuting = False then
+    Exit;
+
+  if gloCount = 1 then
+    frmMain.PB1.Position := 30;
+
+  if gloExecuting = False then
+    Exit;
+
+  if gloCount = 2 then
+    frmMain.PB1.Position := 45;
+
   try
     LStream := TStringStream.Create('');
     if gloCount = 3 then
     begin
+      if gloExecuting = False then
+        Exit;
+
+      SB1.Panels[0].Text:='Parsing ...';
+
+      frmMain.PB1.Position := 50;
       { WAY 1 }
       if Pos(URLCompare1, ShortString(WB1.LocationURL)) > 0 then
       begin
@@ -595,7 +695,9 @@ begin
         memResult.Lines.Add(gloLivestock.MotherNumber);
         memResult.Lines.Add(gloLivestock.Passport);
 
+        Application.ProcessMessages;
         NavigateDetail2(LStream.DataString);
+        Application.ProcessMessages;
 
         // MOVED to WB2
         // memResult.Lines.Add(gloLivestock.OwnerCode);
@@ -658,6 +760,7 @@ initialization
 finalization
 
 CoUninitialize;
-frmMain.free;
+if gloAbort <> True then
+  frmMain.free;
 
 end.
