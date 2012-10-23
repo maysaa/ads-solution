@@ -2,14 +2,15 @@
 <BorlandProject>
 	<Transactions>
     <Transaction>1899.12.30 00:00:00.000.518,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.262,D:\DEV\ADS\trunk\ALoader\ALib\MainFRM.pas=D:\DEV\ADS\trunk\ALoader\ALib\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.153,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.645,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.463,D:\DEV\ADS\trunk\ALoader\ALib\ALib.dproj=C:\Users\User\Documents\RAD Studio\Projects\Project1.dproj</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.757,=D:\DEV\ADS\trunk\ALoader\ALib\Unit1.pas</Transaction>
     <Transaction>1899.12.30 00:00:00.000.975,=D:\DEV\ADS\trunk\ALoader\ALib\ALib.todo</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.262,D:\DEV\ADS\trunk\ALoader\ALib\MainFRM.dfm=D:\DEV\ADS\trunk\ALoader\ALib\Unit1.dfm</Transaction>
-  </Transactions>  <ProjectSortOrder AutoSort="0" SortType="0">
+    <Transaction>1899.12.30 00:00:00.000.645,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.153,=C:\Users\User\Documents\RAD Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.757,=D:\DEV\ADS\trunk\ALoader\ALib\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.262,D:\DEV\ADS\trunk\ALoader\ALib\Unit1.pas=D:\DEV\ADS\trunk\ALoader\ALib\MainFRM.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.463,C:\Users\User\Documents\RAD Studio\Projects\Project1.dproj=D:\DEV\ADS\trunk\ALoader\ALib\ALib.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.262,D:\DEV\ADS\trunk\ALoader\ALib\Unit1.dfm=D:\DEV\ADS\trunk\ALoader\ALib\MainFRM.dfm</Transaction>
+  </Transactions>
+	<ProjectSortOrder AutoSort="0" SortType="0">
     <File Path="MainFRM.pas"/>
     <File Path="MainFRM.dfm"/>
   </ProjectSortOrder>

@@ -5,7 +5,7 @@
 			<FrameworkType>VCL</FrameworkType>
 			<MainSource>ALib.dpr</MainSource>
 			<Base>True</Base>
-			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Config Condition="'$(Config)'==''">Release</Config>
 			<Platform Condition="'$(Platform)'==''">Win32</Platform>
 			<TargetedPlatforms>1</TargetedPlatforms>
 			<AppType>Library</AppType>
@@ -39,7 +39,19 @@
 			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
+			<Cfg_2_Win32>true</Cfg_2_Win32>
+			<CfgParent>Cfg_2</CfgParent>
+			<Cfg_2>true</Cfg_2>
+			<Base>true</Base>
+		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<Manifest_File>None</Manifest_File>
+			<VerInfo_Locale>1063</VerInfo_Locale>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.3.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.3;Comments=</VerInfo_Keys>
+			<VerInfo_DLL>true</VerInfo_DLL>
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+			<VerInfo_Release>3</VerInfo_Release>
 			<DCC_UsePackage>AnyDAC_PhysADS_D16;AnyDAC_Comp_D16;DBXInterBaseDriver;DataSnapServer;DataSnapCommon;DbxCommonDriver;dbxcds;AnyDAC_PhysTDBX_D16;CustomIPTransport;dsnap;AnyDAC_PhysSQLITE_D16;IndyCore;IPIndyImpl;bindcompfmx;dbrtl;bindcomp;inetdb;xmlrtl;ibxpress;bindengine;soaprtl;DBXInformixDriver;DBXFirebirdDriver;inet;AnyDAC_PhysMSAcc_D16;DBXSybaseASADriver;AnyDAC_GUIxForms_D16;dbexpress;fmx;AnyDAC_PhysPg_D16;AnyDAC_PhysDb2_D16;IndySystem;AnyDAC_Phys_D16;DataSnapClient;DataSnapProviderClient;AnyDAC_PhysMSSQL_D16;DBXOracleDriver;AnyDAC_PhysOracle_D16;fmxase;AnyDAC_PhysMySQL_D16;inetdbxpress;AnyDAC_PhysODBC_D16;rtl;DbxClientDriver;AnyDAC_PhysASA_D16;IndyProtocols;DBXMySQLDriver;AnyDAC_ComI_D16;fmxobj;AnyDAC_PhysIB_D16;fmxdae;DataSnapIndy10ServerTransport;$(DCC_UsePackage)</DCC_UsePackage>
 			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
 			<GenDll>true</GenDll>
@@ -59,9 +71,11 @@
 			<DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
 			<DCC_UsePackage>cxPageControlD16;dxComnD16;dxPSCoreD16;dcldxSkinsCoreD16;cxSpreadSheetD16;dxSkinHighContrastD16;dxSkinLiquidSkyD16;dxSkinSilverD16;DIHtmlParser_DXE2;vclimg;fmi;dxSkinOffice2010SilverD16;dxSkinOffice2010BlackD16;vcldb;cxPivotGridChartD16;dxRibbonD16;cxVerticalGridD16;dxSkinLilianD16;dxThemeD16;dxSkinBlueD16;cxSchedulerGridD16;cxTreeListdxBarPopupMenuD16;dxSkinOffice2010BlueD16;dxGDIPlusD16;CloudService;dxPSdxDBTVLnkD16;FmxTeeUI;dxSkinTheAsphaltWorldD16;dxSkinSevenD16;cxTreeListD16;cxLibraryD16;dxPSdxDBOCLnkD16;dxPScxSchedulerLnkD16;dxSkinPumpkinD16;dxBarExtItemsD16;dxLayoutControlD16;dxDockingD16;vcldbx;dxSkinXmas2008BlueD16;dxSkinMcSkinD16;cxPivotGridD16;dxPSTeeChartD16;cxEditorsD16;EmbeddedWebBrowser_XE2;dxPScxCommonD16;DBXOdbcDriver;dxPSLnksD16;dxBarExtDBItemsD16;dxSkinsCoreD16;dxmdsD16;frxDB16;intrawebdb_120_160;fs16;FMXTee;vclactnband;bindcompvcl;dxSkinSummer2008D16;dxTabbedMDID16;vclie;dxPSdxLCLnkD16;dxSkinSharpPlusD16;dxSkinBlackD16;dsnapcon;vclx;dxSkinsdxBarPainterD16;dxPScxTLLnkD16;cxSchedulerD16;dxSkinValentineD16;dxSkinWhiteprintD16;cxPageControldxBarPopupMenuD16;dxSkinOffice2007SilverD16;dxPSdxFCLnkD16;cxBarEditItemD16;TeeDB;dxNavBarD16;dxSkinSpringTimeD16;Rave100VCL;vclib;inetdbbde;dxSkinOffice2007BlueD16;dxPSDBTeeChartD16;dxSkinsdxNavBarPainterD16;cxPivotGridOLAPD16;dxSpellCheckerD16;dxdbtrD16;DBXSybaseASEDriver;dxBarDBNavD16;dxSkinGlassOceansD16;dxSkinStardustD16;dxCoreD16;dxorgcD16;vcldsnap;dxSkinDarkSideD16;dxSkinscxPCPainterD16;dxPScxExtCommonD16;DBXDb2Driver;Intraweb_120_160;vclribbon;frxe16;dxdborD16;vcl;dxSkinscxSchedulerPainterD16;dxPSdxOCLnkD16;dxPScxSSLnkD16;DBXMSSQLDriver;CodeSiteExpressPkg;dxSkinCoffeeD16;dxSkinDarkRoomD16;dxPScxVGridLnkD16;dxPScxPivotGridLnkD16;webdsnap;dxBarD16;dxSkinDevExpressStyleD16;dxPScxPCProdD16;dxtrmdD16;dxSkiniMaginaryD16;dxSkinOffice2007BlackD16;adortl;dxPScxGridLnkD16;dxSkinLondonLiquidSkyD16;frx16;dxPsPrVwAdvD16;dxSkinOffice2007GreenD16;dxSkinSharpD16;Tee;dxSkinSevenClassicD16;svnui;dxSkinsdxDLPainterD16;dxSkinBlueprintD16;dxPSPrVwRibbonD16;TeeUI;dxSkinMoneyTwinsD16;dxSkinDevExpressDarkStyleD16;dxSkinCaramelD16;vcltouch;websnap;dxSkinFoggyD16;VclSmp;fsDB16;dxFlowChartD16;dxSkinsdxRibbonPainterD16;DataSnapConnectors;dxSkinVS2010D16;cxGridD16;dxSkinOffice2007PinkD16;svn;bdertl;$(DCC_UsePackage)</DCC_UsePackage>
 			<VerInfo_Locale>1033</VerInfo_Locale>
-			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<Manifest_File>None</Manifest_File>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<VerInfo_Locale>1063</VerInfo_Locale>
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 			<DCC_Optimize>false</DCC_Optimize>
 			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
@@ -69,13 +83,10 @@
 			<DCC_RemoteDebug>true</DCC_RemoteDebug>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.2.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.2;Comments=</VerInfo_Keys>
 			<Debugger_RunParams>&quot;d:\DEV\ADS\trunk\ALoader\ALib\Win32\Debug\ALib.dll &quot; Debug</Debugger_RunParams>
-			<VerInfo_DLL>true</VerInfo_DLL>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<VerInfo_Release>2</VerInfo_Release>
-			<Manifest_File>None</Manifest_File>
 			<Debugger_HostApplication>c:\Windows\System32\rundll32.exe</Debugger_HostApplication>
 			<DCC_RemoteDebug>false</DCC_RemoteDebug>
 		</PropertyGroup>
@@ -84,6 +95,11 @@
 			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
 			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
 			<DCC_DebugInformation>false</DCC_DebugInformation>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.5.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.5;Comments=</VerInfo_Keys>
+			<VerInfo_Release>4</VerInfo_Release>
+			<VerInfo_Locale>1033</VerInfo_Locale>
 		</PropertyGroup>
 		<ItemGroup>
 			<DelphiCompile Include="$(MainSource)">
