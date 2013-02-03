@@ -1,9 +1,10 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderStyle = bsDialog
   Caption = 'Main'
-  ClientHeight = 645
-  ClientWidth = 739
+  ClientHeight = 298
+  ClientWidth = 475
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,9 +12,10 @@ object frmMain: TfrmMain
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  Position = poDesktopCenter
   DesignSize = (
-    739
-    645)
+    475
+    298)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -42,8 +44,8 @@ object frmMain: TfrmMain
   object WB1: TEmbeddedWB
     Left = 0
     Top = 296
-    Width = 737
-    Height = 241
+    Width = 473
+    Height = 0
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
     Silent = False
@@ -58,6 +60,8 @@ object frmMain: TfrmMain
       '<HTML></HTML>')
     PrintOptions.Footer = '&u&b&d'
     PrintOptions.Orientation = poPortrait
+    ExplicitWidth = 737
+    ExplicitHeight = 241
     ControlData = {
       4C0000002C4C0000452A00000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800
