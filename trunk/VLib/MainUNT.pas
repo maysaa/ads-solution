@@ -30,6 +30,7 @@ type
     function Proceed1(ACode: String): Boolean;
     function Proceed2(ACode: String): Boolean;
     function Parse1(ASource: String; ASourceText: String): Boolean;
+    function Parse2(ASource: String; ASourceText: String): Boolean;
   public
     { Public declarations }
   end;
@@ -58,10 +59,10 @@ begin
   WB1.Navigate('about:blank');
   WB1.Navigate(gloURL1);
 
+  //Padaryti timeout ir su state ir gal kartojima
   while WB1.ReadyState < READYSTATE_INTERACTIVE do
     Application.ProcessMessages;
 
-  // Antra karta paleidus tinka ir gloCount1 ???
   while (gloCount < 1) and (ATimeout < 199999999) do
   begin
     Application.ProcessMessages;
@@ -127,26 +128,56 @@ begin
   if Pos('Įrašų nerasta', WB1.DocumentSource) > 0 then
   begin
     memResult.Lines.Add('Įrašų nerasta');
+    // try parse 2
+    Proceed2(txtCode.Text);
     Exit;
   end;
 
   AStart := Pos('Paieškos rezultatai', ASourceText);
 
   AResult := ASourceText;
-  Delete(AResult, 1, AStart-1);
+  Delete(AResult, 1, AStart - 1);
 
   AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
-  Delete(AResult, AEnd, length(AResult)-AEnd);
+  Delete(AResult, AEnd, length(AResult) - AEnd);
 
-  memResult.Lines.Text := Trim(AResult);
+  memResult.Lines.Text := trim(AResult);
 
+end;
+
+function TfrmMain.Parse2(ASource, ASourceText: String): Boolean;
+var
+  AStart: Integer;
+  AEnd: Integer;
+  AResult: String;
+begin
+  Result := False;
+
+  // Result parse
+  if Pos('Įrašų nerasta', WB1.DocumentSource) > 0 then
+  begin
+    memResult.Lines.Add('Įrašų nerasta');
+    Exit;
+  end;
+
+  AStart := Pos('Paieškos rezultatai', ASourceText);
+
+  AResult := ASourceText;
+  Delete(AResult, 1, AStart - 1);
+
+  AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
+  Delete(AResult, AEnd, length(AResult) - AEnd);
+
+  memResult.Lines.Text := trim(AResult);
 end;
 
 function TfrmMain.Proceed1(ACode: String): Boolean;
 var
   aElement: IhtmlElement;
+  ATimeout: Integer;
 begin
   Result := False;
+  ATimeout := 0;
 
   // Recognize person code and select person code radio button
   if length(trim(txtCode.Text)) = 11 then
@@ -184,22 +215,84 @@ begin
   else
     Exit;
 
-  // TODO: timeout padaryti
-   while gloCount < 2 do
-   Application.ProcessMessages;
+  while (gloCount < 2) and (ATimeout < 199999999) do
+  begin
+    Application.ProcessMessages;
+    Inc(ATimeout);
+  end;
 
-  // Result parse
-  // ShowMessage(WB1.DocumentSource);
-  // ShowMessage(WB1.DocumentSourceText);
-  // WB1.DocumentSourceText
-
-  // memResult.Lines.Text := WB1.DocumentSourceText;
+  if ATimeout >= 199999999 then
+  begin
+    WB1.Stop;
+    WB1.Navigate('about:blank');
+    WB1.Navigate(gloURL1);
+    ShowMessage('TimeOut');
+    Exit;
+  end;
 
   Parse1(WB1.DocumentSource, WB1.DocumentSourceText);
 end;
 
 function TfrmMain.Proceed2(ACode: String): Boolean;
+var
+  ATimeout: Integer;
+  aElement: IhtmlElement;
 begin
+  Result := False;
+
+  gloCount := 0;
+  ATimeout := 0;
+  WB1.Stop;
+  WB1.Navigate('about:blank');
+  WB1.Navigate(gloURL2);
+
+  while WB1.ReadyState < READYSTATE_INTERACTIVE do
+    Application.ProcessMessages;
+
+  while (gloCount < 1) and (ATimeout < 199999999) do
+  begin
+    Application.ProcessMessages;
+    Inc(ATimeout);
+  end;
+
+  if ATimeout >= 199999999 then
+  begin
+    ShowMessage ('Timeout');
+    Exit;
+  end;
+
+  aElement := WB1.ElementByID['inpCode'];
+  if aElement <> nil then
+  begin
+    aElement.click;
+    WB1.FillForm('InputByCode', ACode);
+    WB1.FillFormAndExcecute;
+  end;
+
+  aElement := nil;
+
+  aElement := WB1.ElementByID['LNGSubmit'];
+  if aElement <> nil then
+  begin
+    aElement.click;
+  end
+  else
+    Exit;
+
+  ATimeout := 0;
+  while (gloCount < 2) and (ATimeout < 199999999) do
+  begin
+    Application.ProcessMessages;
+    Inc(ATimeout);
+  end;
+
+  if ATimeout >= 199999999 then
+  begin
+    ShowMessage ('Timeout');
+    Exit;
+  end;
+
+  Parse2(WB1.DocumentSource, WB1.DocumentSourceText);
 
 end;
 
