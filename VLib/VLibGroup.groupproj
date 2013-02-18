@@ -1,0 +1,60 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{1AEBBE42-060B-439A-A050-62CB55C31511}</ProjectGuid>
+		</PropertyGroup>
+		<ItemGroup>
+			<Projects Include="Library_proj\VLib.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="VLibPrototype.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="Library_proj\DLL_Loader\DLL_Loader.dproj">
+				<Dependencies/>
+			</Projects>
+		</ItemGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Default.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Default.Personality/>
+			</BorlandProject>
+		</ProjectExtensions>
+		<Target Name="VLib">
+			<MSBuild Projects="Library_proj\VLib.dproj"/>
+		</Target>
+		<Target Name="VLib:Clean">
+			<MSBuild Projects="Library_proj\VLib.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="VLib:Make">
+			<MSBuild Projects="Library_proj\VLib.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="VLibPrototype">
+			<MSBuild Projects="VLibPrototype.dproj"/>
+		</Target>
+		<Target Name="VLibPrototype:Clean">
+			<MSBuild Projects="VLibPrototype.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="VLibPrototype:Make">
+			<MSBuild Projects="VLibPrototype.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="DLL_Loader">
+			<MSBuild Projects="Library_proj\DLL_Loader\DLL_Loader.dproj"/>
+		</Target>
+		<Target Name="DLL_Loader:Clean">
+			<MSBuild Projects="Library_proj\DLL_Loader\DLL_Loader.dproj" Targets="Clean"/>
+		</Target>
+		<Target Name="DLL_Loader:Make">
+			<MSBuild Projects="Library_proj\DLL_Loader\DLL_Loader.dproj" Targets="Make"/>
+		</Target>
+		<Target Name="Build">
+			<CallTarget Targets="VLib;VLibPrototype;DLL_Loader"/>
+		</Target>
+		<Target Name="Clean">
+			<CallTarget Targets="VLib:Clean;VLibPrototype:Clean;DLL_Loader:Clean"/>
+		</Target>
+		<Target Name="Make">
+			<CallTarget Targets="VLib:Make;VLibPrototype:Make;DLL_Loader:Make"/>
+		</Target>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
+	</Project>
