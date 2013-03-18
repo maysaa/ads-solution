@@ -19,12 +19,13 @@ uses
 
 {$R *.res}
 
-Exports GetData;
+Exports Test, GetData;
 begin
   try
     CoInitialize(nil);
     frmMain := TfrmMain.Create(nil);
-     frmMain.ShowModal;
+    frmMain.Caption := RSStep0;
+    //frmMain.ShowModal;
   finally
   end;
 end.

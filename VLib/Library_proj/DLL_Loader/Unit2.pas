@@ -38,6 +38,8 @@ type
 
   TGetInfo = function(ANumber: WideString; out AContractor: TContractor;
     out AContractorVAT: TContractorVAT): Boolean;
+  TTest = function(ANumber: WideString; out AContractor: TContractor;
+    out AContractorVAT: TContractorVAT): Boolean;
 
 type
   TForm2 = class(TForm)
@@ -60,28 +62,37 @@ procedure TForm2.Button1Click(Sender: TObject);
 var
   dllHandle: cardinal;
   GetInfo: TGetInfo;
+  Test: TTest;
   resContractor: TContractor;
   resContractorVAT: TContractorVAT;
 begin
-  dllHandle := LoadLibrary
-    ('d:\DEV\ADS\trunk\VLib\Library_proj\Win32\Debug\VLib.dll');
-  if dllHandle <> 0 then
-  begin
-    @GetInfo := GetProcAddress(dllHandle, 'GetData');
-    if Assigned(GetInfo) then
+    dllHandle := LoadLibrary
+      ('d:\DEV\ADS\trunk\VLib\Library_proj\Win32\Debug\VLib.dll');
+    if dllHandle <> 0 then
     begin
-       GetInfo('123456789',resContractor, resContractorVAT);
-      ShowMessage(resContractor.Name);
-      ShowMessage(resContractorVAT.Name);
+      // @GetInfo := GetProcAddress(dllHandle, 'GetData');
+      @GetInfo := GetProcAddress(dllHandle, 'GetData');
+      // if Assigned(GetInfo) then
+      // begin
+      // GetInfo('46008281120',resContractor, resContractorVAT);
+
+      // ShowMessage(resContractor.Name);
+      // ShowMessage(resContractorVAT.Name);
+      if Assigned(GetInfo) then
+      begin
+        GetInfo('45609190875', resContractor, resContractorVAT);
+        ShowMessage(resContractor.Code);
+        ShowMessage(resContractorVAT.Name);
+      end
+
+      else
+        ShowMessage('"GetData" function not found');
+      FreeLibrary(dllHandle);
     end
     else
-      ShowMessage('"GetData" function not found');
-    FreeLibrary(dllHandle);
-  end
-  else
-  begin
-    ShowMessage('VLib.dll not found / not loaded');
-  end;
+    begin
+      ShowMessage('VLib.dll not found / not loaded');
+    end;
 end;
 
 end.
