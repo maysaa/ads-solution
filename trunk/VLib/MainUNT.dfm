@@ -1,6 +1,7 @@
 object frmMain: TfrmMain
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = 'Main'
   ClientHeight = 298
@@ -43,12 +44,11 @@ object frmMain: TfrmMain
   end
   object WB1: TEmbeddedWB
     Left = 0
-    Top = 296
+    Top = 265
     Width = 473
-    Height = 0
+    Height = 31
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
-    Silent = False
     OnNavigateComplete2 = WB1NavigateComplete2
     OnDocumentComplete = WB1DocumentComplete
     DisableCtrlShortcuts = 'N'
@@ -60,8 +60,6 @@ object frmMain: TfrmMain
       '<HTML></HTML>')
     PrintOptions.Footer = '&u&b&d'
     PrintOptions.Orientation = poPortrait
-    ExplicitWidth = 737
-    ExplicitHeight = 241
     ControlData = {
       4C0000002C4C0000452A00000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800
