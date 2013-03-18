@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject>
-	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.591,C:\Users\User\Documents\RAD Studio\Projects\ProjectGroup1.groupproj=D:\DEV\ADS\trunk\ALoader\ALoaderGroup.groupproj</Transaction>
-  </Transactions>
-	<Default.Personality>
-		<Projects ActiveProject="D:\DEV\ADS\trunk\ALoader\Library\ALoaderLib.dproj"/>
-	</Default.Personality>
-</BorlandProject>
