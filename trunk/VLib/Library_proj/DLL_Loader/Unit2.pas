@@ -65,34 +65,39 @@ var
   Test: TTest;
   resContractor: TContractor;
   resContractorVAT: TContractorVAT;
+  AResult: Boolean;
 begin
-    dllHandle := LoadLibrary
-      ('d:\DEV\ADS\trunk\VLib\Library_proj\Win32\Debug\VLib.dll');
-    if dllHandle <> 0 then
-    begin
-      // @GetInfo := GetProcAddress(dllHandle, 'GetData');
-      @GetInfo := GetProcAddress(dllHandle, 'GetData');
-      // if Assigned(GetInfo) then
-      // begin
-      // GetInfo('46008281120',resContractor, resContractorVAT);
+  dllHandle := LoadLibrary
+    ('d:\DEV\ADS\trunk\VLib\Library_proj\Win32\Debug\VLib.dll');
+  if dllHandle <> 0 then
+  begin
+    // @GetInfo := GetProcAddress(dllHandle, 'GetData');
+    @GetInfo := GetProcAddress(dllHandle, 'GetData');
+    // if Assigned(GetInfo) then
+    // begin
+    // GetInfo('46008281120',resContractor, resContractorVAT);
 
-      // ShowMessage(resContractor.Name);
-      // ShowMessage(resContractorVAT.Name);
-      if Assigned(GetInfo) then
+    // ShowMessage(resContractor.Name);
+    // ShowMessage(resContractorVAT.Name);
+    if Assigned(GetInfo) then
+    begin
+      AResult := GetInfo('45609190875', resContractor, resContractorVAT);
+      if AResult then
       begin
-        GetInfo('45609190875', resContractor, resContractorVAT);
         ShowMessage(resContractor.Code);
         ShowMessage(resContractorVAT.Name);
       end
-
       else
-        ShowMessage('"GetData" function not found');
-      FreeLibrary(dllHandle);
+        ShowMessage('Error occurs from DLL');
     end
     else
-    begin
-      ShowMessage('VLib.dll not found / not loaded');
-    end;
+      ShowMessage('"GetData" function not found');
+    FreeLibrary(dllHandle);
+  end
+  else
+  begin
+    ShowMessage('VLib.dll not found / not loaded');
+  end;
 end;
 
 end.

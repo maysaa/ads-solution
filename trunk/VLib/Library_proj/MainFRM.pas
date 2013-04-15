@@ -81,6 +81,7 @@ var
   gloURL1: String = 'http://www.vmi.lt/lt/?itemId=1003741';
   gloURL2: String = 'http://www.vmi.lt/lt/?itemId=1003740';
   gloCount: Integer;
+  gloIsError: Boolean;
 
 Function GetData(ANumber: WideString; out AContractor: TContractor;
   out AContractorVAT: TContractorVAT): Boolean;
@@ -101,8 +102,8 @@ begin
   Result := False;
   ATimeout := 0;
 
-  frmMain.Caption:= RSStep2;
-  frmMain.PB1.Position:= 15;
+  frmMain.Caption := RSStep2;
+  frmMain.PB1.Position := 15;
   Application.ProcessMessages;
 
   // Recognize person code and select person code radio button
@@ -115,6 +116,11 @@ begin
       aElement.click;
       WB1.FillForm('InputByPerson_code', ACode);
       WB1.FillFormAndExcecute;
+    end
+    else
+    begin
+      gloIsError := True;
+      Exit;
     end;
   end;
 
@@ -128,13 +134,18 @@ begin
       aElement.click;
       WB1.FillForm('InputByCode', ACode);
       WB1.FillFormAndExcecute;
+    end
+    else
+    begin
+      gloIsError := True;
+      Exit;
     end;
   end;
 
   aElement := nil;
 
-    frmMain.Caption:= RSStep3;
-  frmMain.PB1.Position:= 25;
+  frmMain.Caption := RSStep3;
+  frmMain.PB1.Position := 25;
   Application.ProcessMessages;
 
   aElement := WB1.ElementByID['LNGSubmit'];
@@ -143,7 +154,10 @@ begin
     aElement.click;
   end
   else
+  begin
+    gloIsError := True;
     Exit;
+  end;
 
   while (gloCount < 2) and (ATimeout < 199999999) do
   begin
@@ -157,6 +171,7 @@ begin
     WB1.Navigate('about:blank');
     WB1.Navigate(gloURL1);
     ShowMessage(RSTimeOut);
+    gloIsError := True;
     Exit;
   end;
 
@@ -170,8 +185,8 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep6;
-  frmMain.PB1.Position:= 50;
+  frmMain.Caption := RSStep6;
+  frmMain.PB1.Position := 50;
   Application.ProcessMessages;
 
   gloCount := 0;
@@ -192,11 +207,12 @@ begin
   if ATimeout >= 199999999 then
   begin
     ShowMessage(RSTimeOut);
+    gloIsError := True;
     Exit;
   end;
 
-    frmMain.Caption:= RSStep7;
-  frmMain.PB1.Position:= 55;
+  frmMain.Caption := RSStep7;
+  frmMain.PB1.Position := 55;
   Application.ProcessMessages;
 
   aElement := WB1.ElementByID['inpCode'];
@@ -205,12 +221,17 @@ begin
     aElement.click;
     WB1.FillForm('InputByCode', ACode);
     WB1.FillFormAndExcecute;
+  end
+  else
+  begin
+    gloIsError := True;
+    Exit;
   end;
 
   aElement := nil;
 
-    frmMain.Caption:= RSStep8;
-  frmMain.PB1.Position:= 65;
+  frmMain.Caption := RSStep8;
+  frmMain.PB1.Position := 65;
   Application.ProcessMessages;
   aElement := WB1.ElementByID['LNGSubmit'];
   if aElement <> nil then
@@ -218,7 +239,10 @@ begin
     aElement.click;
   end
   else
+  begin
+    gloIsError := True;
     Exit;
+  end;
 
   ATimeout := 0;
   while (gloCount < 2) and (ATimeout < 199999999) do
@@ -230,6 +254,7 @@ begin
   if ATimeout >= 199999999 then
   begin
     ShowMessage(RSTimeOut);
+    gloIsError := True;
     Exit;
   end;
 
@@ -249,8 +274,8 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep5;
-  frmMain.PB1.Position:= 35;
+  frmMain.Caption := RSStep5;
+  frmMain.PB1.Position := 35;
   Application.ProcessMessages;
   // Result parse
   if Pos('Įrašų nerasta', WB1.DocumentSource) > 0 then
@@ -413,8 +438,8 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep9;
-  frmMain.PB1.Position:= 70;
+  frmMain.Caption := RSStep9;
+  frmMain.PB1.Position := 70;
   Application.ProcessMessages;
 
   // Result parse
@@ -432,8 +457,8 @@ begin
   AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
   Delete(AResult, AEnd, length(AResult) - AEnd);
 
-    frmMain.Caption:= RSStep10;
-  frmMain.PB1.Position:= 85;
+  frmMain.Caption := RSStep10;
+  frmMain.PB1.Position := 85;
   Application.ProcessMessages;
 
   try
@@ -497,6 +522,7 @@ var
   ATimeout: Integer;
 begin
   Result := False;
+  gloIsError := False;
 
   frmMain.PB1.Position := 0;
   Application.ProcessMessages;
@@ -531,7 +557,7 @@ begin
   ATimeout := 0;
   // ARepeatCount := 0;
 
-  frmMain.Caption:= RSStep1;
+  frmMain.Caption := RSStep1;
   frmMain.PB1.Position := 5;
   Application.ProcessMessages;
 
@@ -555,6 +581,7 @@ begin
     frmMain.WB1.Navigate('about:blank');
     frmMain.WB1.Navigate(gloURL1);
     ShowMessage(RSTimeOut);
+    gloIsError := True;
     Exit;
   end;
 
@@ -567,9 +594,11 @@ begin
   AContractor := gloContractor;
   AContractorVAT := gloContractorVAT;
 
-    frmMain.Caption:= RSStep100;
-  frmMain.PB1.Position:= 100;
+  frmMain.Caption := RSStep100;
+  frmMain.PB1.Position := 100;
   Application.ProcessMessages;
+
+  Result := not gloIsError;
 
 end;
 

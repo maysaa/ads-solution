@@ -4,7 +4,7 @@ object frmMain: TfrmMain
   BorderIcons = []
   BorderStyle = bsToolWindow
   ClientHeight = 29
-  ClientWidth = 401
+  ClientWidth = 395
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,21 +18,19 @@ object frmMain: TfrmMain
   object pnlBottom: TPanel
     Left = 0
     Top = -159
-    Width = 401
+    Width = 395
     Height = 188
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 288
-    ExplicitWidth = 465
+    ExplicitWidth = 401
     object WB1: TEmbeddedWB
       Left = 0
       Top = 0
-      Width = 401
+      Width = 395
       Height = 188
       Align = alClient
       TabOrder = 0
-      Silent = False
       OnDocumentComplete = WB1DocumentComplete
       DisableCtrlShortcuts = 'N'
       DownloadOptions = [DownloadVideos, DownloadBGSounds]
@@ -57,40 +55,40 @@ object frmMain: TfrmMain
   object pnlCenter: TPanel
     Left = 0
     Top = -349
-    Width = 401
+    Width = 395
     Height = 190
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 80
-    ExplicitWidth = 465
+    ExplicitWidth = 401
     object memResult: TMemo
       Left = 0
       Top = 0
-      Width = 401
+      Width = 395
       Height = 190
       Align = alClient
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitTop = -21
-      ExplicitWidth = 465
+      ExplicitWidth = 401
     end
   end
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 401
+    Width = 395
     Height = 30
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 401
     object PB1: TProgressBar
       Left = 0
       Top = 0
-      Width = 401
+      Width = 395
       Height = 30
       Align = alClient
       TabOrder = 0
+      ExplicitWidth = 401
     end
   end
 end
