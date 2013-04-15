@@ -37,9 +37,14 @@ type
 
 var
   frmMain: TfrmMain;
-  gloURL1: String = 'http://www.vmi.lt/lt/?itemId=1003741';
+  // gloURL1: String = 'http://www.vmi.lt/lt/?itemId=1003741';
+  // gloURL2: String = 'http://www.vmi.lt/lt/?itemId=1003740';
+  gloURL1: String =
+    'http://www.vmi.lt/cms/ukininkai-kuriems-taikoma-kompensacinio-pvm-tarifo-schema1';
   gloURL2: String = 'http://www.vmi.lt/lt/?itemId=1003740';
   gloCount: Integer;
+
+Function FindSpecificElement(AText: String): String;
 
 implementation
 
@@ -59,7 +64,7 @@ begin
   WB1.Navigate('about:blank');
   WB1.Navigate(gloURL1);
 
-  //Padaryti timeout ir su state ir gal kartojima
+  // Padaryti timeout ir su state ir gal kartojima
   while WB1.ReadyState < READYSTATE_INTERACTIVE do
     Application.ProcessMessages;
 
@@ -83,6 +88,8 @@ begin
   if trim(txtCode.Text) = '' then
     Exit;
 
+  Exit;
+
   // If Recognize person code or company code try proceed
   if (length(trim(txtCode.Text)) = 11) or (length(trim(txtCode.Text)) = 13) then
     Proceed1(txtCode.Text)
@@ -94,25 +101,63 @@ end;
 procedure TfrmMain.Button2Click(Sender: TObject);
 var
   aElement: IhtmlElement;
+  doc: IHTMLDocument2;
+  ElementCollection: IHTMLElementCollection;
+  HtmlElement: IhtmlElement;
+  InputElement: IHTMLInputElement;
+  i: Integer;
 begin
-  WB1.FillForm('InputByPerson_code', '36205301333');
-  // WB1.FillFormAndExcecute;
+  WB1.FillForm
+    ('_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_asm_kodas',
+    '36205301333');
+  WB1.FillFormAndExcecute;
 
-  aElement := WB1.ElementByID['LNGSubmit'];
-  if aElement <> nil then
+  doc := WB1.Document as IHTMLDocument2;
+
+  ElementCollection := doc.all;
+  for i := 0 to ElementCollection.length - 1 do
   begin
-    aElement.click;
+    try
+      HtmlElement := ElementCollection.item(i, '') as IhtmlElement;
+    except
+      continue;
+    end;
+    if UpperCase(HtmlElement.tagName) = 'INPUT' then
+    begin
+      InputElement := HtmlElement as IHTMLInputElement;
+      if UpperCase(InputElement.type_) = 'SUBMIT' then
+      begin
+        HtmlElement.Click;
+        Exit;
+      end;
+    end;
   end;
+
+
+
+  // "aui-button-input aui-button-input-submit"
+  // <input name="_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_asm_kodas" class="lfr-input-text-container" id="farmers_asm_kodas" type="text" maxlength="11"/>
+  // WB1.ExecScript('"searchFarmers(this.form)"', 'JavaScript');
+  // <input class="aui-button-input aui-button-input-submit" onclick="searchFarmers(this.form);return false;" type="submit" value="Ieškoti"/>
+
+  // aElement := WB1.ElementByID['"aui-button-input aui-button-input-submit"'];
+  // if aElement <> nil then
+  // begin
+  // aElement.click;
+  // end;
 end;
 
 procedure TfrmMain.Button3Click(Sender: TObject);
 var
   aElement: IhtmlElement;
+  aElementName: String;
 begin
-  aElement := WB1.ElementByID['inpPerson_code'];
+  aElementName := FindSpecificElement(WB1.DocumentSource);
+
+  aElement := WB1.ElementByID[aElementName];
   if aElement <> nil then
   begin
-    aElement.click;
+    aElement.Click;
   end;
 end;
 
@@ -186,7 +231,7 @@ begin
     aElement := WB1.ElementByID['inpPerson_code'];
     if aElement <> nil then
     begin
-      aElement.click;
+      aElement.Click;
       WB1.FillForm('InputByPerson_code', ACode);
       WB1.FillFormAndExcecute;
     end;
@@ -199,7 +244,7 @@ begin
     aElement := WB1.ElementByID['inpCode'];
     if aElement <> nil then
     begin
-      aElement.click;
+      aElement.Click;
       WB1.FillForm('InputByCode', ACode);
       WB1.FillFormAndExcecute;
     end;
@@ -210,7 +255,7 @@ begin
   aElement := WB1.ElementByID['LNGSubmit'];
   if aElement <> nil then
   begin
-    aElement.click;
+    aElement.Click;
   end
   else
     Exit;
@@ -257,14 +302,14 @@ begin
 
   if ATimeout >= 199999999 then
   begin
-    ShowMessage ('Timeout');
+    ShowMessage('Timeout');
     Exit;
   end;
 
   aElement := WB1.ElementByID['inpCode'];
   if aElement <> nil then
   begin
-    aElement.click;
+    aElement.Click;
     WB1.FillForm('InputByCode', ACode);
     WB1.FillFormAndExcecute;
   end;
@@ -274,7 +319,7 @@ begin
   aElement := WB1.ElementByID['LNGSubmit'];
   if aElement <> nil then
   begin
-    aElement.click;
+    aElement.Click;
   end
   else
     Exit;
@@ -288,7 +333,7 @@ begin
 
   if ATimeout >= 199999999 then
   begin
-    ShowMessage ('Timeout');
+    ShowMessage('Timeout');
     Exit;
   end;
 
@@ -332,6 +377,25 @@ begin
   // begin
   // aElement.click;
   // end;
+end;
+
+Function FindSpecificElement(AText: String): String;
+Var
+  sConst, sID, sTemp: String;
+  i: Integer;
+begin
+  Result := '';
+  sConst := 'class="aui-field-input aui-field-input-choice" id="_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_';
+  sID := '_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_';
+  sTemp := AText;
+  i := Pos(sConst, AText);
+  if i > 0 then
+  begin
+    Delete(sTemp, 1, i + length(sConst) - 1);
+    Delete(sTemp, 5, length(sTemp) - 5);
+    Result := sID + trim(sTemp);
+  end;
+
 end;
 
 end.

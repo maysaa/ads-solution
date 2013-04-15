@@ -78,7 +78,8 @@ var
   frmMain: TfrmMain;
   gloContractor: TContractor;
   gloContractorVAT: TContractorVAT;
-  gloURL1: String = 'http://www.vmi.lt/lt/?itemId=1003741';
+  gloURL1: String =
+    'http://www.vmi.lt/cms/ukininkai-kuriems-taikoma-kompensacinio-pvm-tarifo-schema1';
   gloURL2: String = 'http://www.vmi.lt/lt/?itemId=1003740';
   gloCount: Integer;
 
@@ -88,6 +89,8 @@ function Test(ANumber: WideString; out AContractor: TContractor;
   out AContractorVAT: TContractorVAT): Boolean;
 Procedure ClearContractor();
 Procedure ClearContractorVAT();
+function FindSpecificElement(AText: String; out aPersonCodeID: String;
+  out aCodeID: String): Boolean;
 
 implementation
 
@@ -97,23 +100,39 @@ function TfrmMain.Proceed1(ACode: String): Boolean;
 var
   aElement: IhtmlElement;
   ATimeout: Integer;
+  aElementName1, aElementName2: String;
+  ElementCollection: IHTMLElementCollection;
+  doc: IHTMLDocument2;
+  InputElement: IHTMLInputElement;
+  i: Integer;
 begin
   Result := False;
   ATimeout := 0;
 
-  frmMain.Caption:= RSStep2;
-  frmMain.PB1.Position:= 15;
+  frmMain.Caption := RSStep2;
+  frmMain.PB1.Position := 15;
   Application.ProcessMessages;
+
+  { Find dinamic elements ID for person code sand coder radio buttons }
+  FindSpecificElement(WB1.DocumentSource, aElementName1, aElementName2);
+  if (aElementName1 = '') or (aElementName2 = '') then
+  begin
+    WB1.Stop;
+    WB1.Navigate('about:blank');
+    ShowMessage(RSTimeOut);
+    EXIT;
+  end;
 
   // Recognize person code and select person code radio button
   if length(trim(ACode)) = 11 then
   begin
-    // Person code 11 symbols
-    aElement := WB1.ElementByID['inpPerson_code'];
+    aElement := WB1.ElementByID[aElementName1];
     if aElement <> nil then
     begin
       aElement.click;
-      WB1.FillForm('InputByPerson_code', ACode);
+      WB1.FillForm
+        ('_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_asm_kodas',
+        ACode);
       WB1.FillFormAndExcecute;
     end;
   end;
@@ -122,28 +141,42 @@ begin
   if length(trim(ACode)) = 13 then
   begin
     // Company code 13 symbols
-    aElement := WB1.ElementByID['inpCode'];
+    aElement := WB1.ElementByID[aElementName2];
     if aElement <> nil then
     begin
       aElement.click;
-      WB1.FillForm('InputByCode', ACode);
+      WB1.FillForm
+        ('_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_kodas',
+        ACode);
       WB1.FillFormAndExcecute;
     end;
   end;
 
   aElement := nil;
 
-    frmMain.Caption:= RSStep3;
-  frmMain.PB1.Position:= 25;
+  frmMain.Caption := RSStep3;
+  frmMain.PB1.Position := 25;
   Application.ProcessMessages;
 
-  aElement := WB1.ElementByID['LNGSubmit'];
-  if aElement <> nil then
+  doc := WB1.Document as IHTMLDocument2;
+
+  ElementCollection := doc.all;
+  for i := 0 to ElementCollection.length - 1 do
   begin
-    aElement.click;
-  end
-  else
-    Exit;
+    try
+      aElement := ElementCollection.item(i, '') as IhtmlElement;
+    except
+      continue;
+    end;
+    if UpperCase(aElement.tagName) = 'INPUT' then
+    begin
+      InputElement := aElement as IHTMLInputElement;
+      if UpperCase(InputElement.type_) = 'SUBMIT' then
+      begin
+        aElement.click;
+      end;
+    end;
+  end;
 
   while (gloCount < 2) and (ATimeout < 199999999) do
   begin
@@ -155,9 +188,8 @@ begin
   begin
     WB1.Stop;
     WB1.Navigate('about:blank');
-    WB1.Navigate(gloURL1);
     ShowMessage(RSTimeOut);
-    Exit;
+    EXIT;
   end;
 
   Parse1(ACode, WB1.DocumentSource, WB1.DocumentSourceText);
@@ -170,8 +202,8 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep6;
-  frmMain.PB1.Position:= 50;
+  frmMain.Caption := RSStep6;
+  frmMain.PB1.Position := 50;
   Application.ProcessMessages;
 
   gloCount := 0;
@@ -192,11 +224,11 @@ begin
   if ATimeout >= 199999999 then
   begin
     ShowMessage(RSTimeOut);
-    Exit;
+    EXIT;
   end;
 
-    frmMain.Caption:= RSStep7;
-  frmMain.PB1.Position:= 55;
+  frmMain.Caption := RSStep7;
+  frmMain.PB1.Position := 55;
   Application.ProcessMessages;
 
   aElement := WB1.ElementByID['inpCode'];
@@ -209,8 +241,8 @@ begin
 
   aElement := nil;
 
-    frmMain.Caption:= RSStep8;
-  frmMain.PB1.Position:= 65;
+  frmMain.Caption := RSStep8;
+  frmMain.PB1.Position := 65;
   Application.ProcessMessages;
   aElement := WB1.ElementByID['LNGSubmit'];
   if aElement <> nil then
@@ -218,7 +250,7 @@ begin
     aElement.click;
   end
   else
-    Exit;
+    EXIT;
 
   ATimeout := 0;
   while (gloCount < 2) and (ATimeout < 199999999) do
@@ -230,7 +262,7 @@ begin
   if ATimeout >= 199999999 then
   begin
     ShowMessage(RSTimeOut);
-    Exit;
+    EXIT;
   end;
 
   Parse2(WB1.DocumentSource, WB1.DocumentSourceText);
@@ -249,8 +281,8 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep5;
-  frmMain.PB1.Position:= 35;
+  frmMain.Caption := RSStep5;
+  frmMain.PB1.Position := 35;
   Application.ProcessMessages;
   // Result parse
   if Pos('Įrašų nerasta', WB1.DocumentSource) > 0 then
@@ -258,7 +290,7 @@ begin
     memResult.Lines.Add('Įrašų nerasta');
     // try parse 2
     Proceed2(ACode);
-    Exit;
+    EXIT;
   end;
 
   AStart := Pos('Paieškos rezultatai', ASourceText);
@@ -266,7 +298,7 @@ begin
   AResult := ASourceText;
   Delete(AResult, 1, AStart - 1);
 
-  AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
+  AEnd := Pos('į viršų', AResult);
   Delete(AResult, AEnd, length(AResult) - AEnd);
 
   try
@@ -274,16 +306,16 @@ begin
     AList.Text := AResult;
     for i := 0 to AList.Count - 1 do
     begin
-      if AList[i] = 'Paieškos rezultatai' then
+      if Trim(AList[i]) = 'Paieškos rezultatai' then
       begin
-        gloContractor.Name := AList[i + 1];
+        gloContractor.Name := Trim(AList[i + 4]);
       end;
 
 {$REGION 'FIELDS PARSING'}
       { Kodas: }
       if Pos('Kodas:', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Kodas:', TempString);
         Delete(TempString, 1, 6);
         if TempString <> '' then
@@ -295,7 +327,7 @@ begin
       { Pažym. nr. }
       if Pos('Pažym. nr.', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Pažym. nr.', TempString);
         Delete(TempString, 1, 10);
         if TempString <> '' then
@@ -307,7 +339,7 @@ begin
       { Reg. data }
       if Pos('Reg. data', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Reg. data', TempString);
         Delete(TempString, 1, 9);
         if TempString <> '' then
@@ -319,7 +351,7 @@ begin
       { Data nuo kada taikomas komp. PVM tarifas }
       if Pos('Data nuo kada taikomas komp. PVM tarifas', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Data nuo kada taikomas komp. PVM tarifas',
           TempString);
         Delete(TempString, 1, 40);
@@ -332,7 +364,7 @@ begin
       { Išreg. data }
       if Pos('Išreg. data', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Išreg. data', TempString);
         Delete(TempString, 1, 11);
         if TempString <> '' then
@@ -344,7 +376,7 @@ begin
       { Pažym. negalioja nuo }
       if Pos('Pažym. negalioja nuo', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Pažym. negalioja nuo', TempString);
         Delete(TempString, 1, 20);
         if TempString <> '' then
@@ -357,7 +389,7 @@ begin
       if Pos('Paskelbimo negaliojančiu "VŽ" priede "Informaciniai pranešimai"',
         AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex :=
           Pos('Paskelbimo negaliojančiu "VŽ" priede "Informaciniai pranešimai"',
           TempString);
@@ -371,7 +403,7 @@ begin
       { Išreg. priežastis }
       if Pos('Išreg. priežastis', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Išreg. priežastis', TempString);
         Delete(TempString, 1, 17);
         if TempString <> '' then
@@ -383,7 +415,7 @@ begin
       { Pastabos }
       if Pos('Pastabos', AList[i]) > 0 then
       begin
-        TempString := AList[i];
+        TempString := Trim(AList[i]);
         TempIndex := Pos('Pastabos', TempString);
         Delete(TempString, 1, 8);
         if TempString <> '' then
@@ -395,6 +427,11 @@ begin
     end;
 
     memResult.Lines.Text := trim(AResult);
+
+     ShowMessage('EXIT');
+  EXIT;
+
+
     Proceed2(ACode);
   finally
     AList.Free;
@@ -413,15 +450,15 @@ var
 begin
   Result := False;
 
-    frmMain.Caption:= RSStep9;
-  frmMain.PB1.Position:= 70;
+  frmMain.Caption := RSStep9;
+  frmMain.PB1.Position := 70;
   Application.ProcessMessages;
 
   // Result parse
   if Pos('Įrašų nerasta', WB1.DocumentSource) > 0 then
   begin
     memResult.Lines.Add('Įrašų nerasta');
-    Exit;
+    EXIT;
   end;
 
   AStart := Pos('Paieškos rezultatai', ASourceText);
@@ -432,8 +469,8 @@ begin
   AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
   Delete(AResult, AEnd, length(AResult) - AEnd);
 
-    frmMain.Caption:= RSStep10;
-  frmMain.PB1.Position:= 85;
+  frmMain.Caption := RSStep10;
+  frmMain.PB1.Position := 85;
   Application.ProcessMessages;
 
   try
@@ -503,7 +540,7 @@ begin
 
   if not Assigned(frmMain) then
   begin
-    Exit;
+    EXIT;
   end;
 
   { Reset data }
@@ -514,24 +551,24 @@ begin
   AContractor := gloContractor;
   AContractorVAT := gloContractorVAT;
 
-  // frmMain.WindowState := wsMaximized; // SET MAXIMAZE FOR TEST PURPOSE ONLY
+  frmMain.WindowState := wsMaximized; // SET MAXIMAZE FOR TEST PURPOSE ONLY
   frmMain.Show;
 
   if trim(ANumber) = '' then
   begin
-    Exit;
+    EXIT;
   end;
 
   { Prevent of empty parameter }
   if trim(ANumber) = '' then
-    Exit;
+    EXIT;
 
   { Init }
   gloCount := 0;
   ATimeout := 0;
   // ARepeatCount := 0;
 
-  frmMain.Caption:= RSStep1;
+  frmMain.Caption := RSStep1;
   frmMain.PB1.Position := 5;
   Application.ProcessMessages;
 
@@ -553,9 +590,8 @@ begin
   begin
     frmMain.WB1.Stop;
     frmMain.WB1.Navigate('about:blank');
-    frmMain.WB1.Navigate(gloURL1);
     ShowMessage(RSTimeOut);
-    Exit;
+    EXIT;
   end;
 
   // If Recognize person code or company code try proceed
@@ -567,8 +603,8 @@ begin
   AContractor := gloContractor;
   AContractorVAT := gloContractorVAT;
 
-    frmMain.Caption:= RSStep100;
-  frmMain.PB1.Position:= 100;
+  frmMain.Caption := RSStep100;
+  frmMain.PB1.Position := 100;
   Application.ProcessMessages;
 
 end;
@@ -609,7 +645,7 @@ begin
   Result := False;
   if not Assigned(frmMain) then
   begin
-    Exit;
+    EXIT;
   end;
   frmMain.Show;
 
@@ -629,6 +665,34 @@ begin
   while frmMain.WB1.ReadyState < READYSTATE_INTERACTIVE do
     Application.ProcessMessages;
 
+end;
+
+function FindSpecificElement(AText: String; out aPersonCodeID: String;
+  out aCodeID: String): Boolean;
+Var
+  sConst, sID, sTemp1, sTemp2: String;
+  i: Integer;
+begin
+  Result := False;
+  sConst := 'class="aui-field-input aui-field-input-choice" id="_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_';
+  sID := '_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_';
+  sTemp1 := AText;
+  i := Pos(sConst, AText);
+  if i > 0 then
+  begin
+    Delete(sTemp1, 1, i + length(sConst) - 1);
+    sTemp2 := sTemp1;
+    Delete(sTemp1, 5, length(sTemp1) - 5);
+    aPersonCodeID := sID + trim(sTemp1);
+  end;
+
+  i := Pos(sConst, sTemp2);
+  if i > 0 then
+  begin
+    Delete(sTemp2, 1, i + length(sConst) - 1);
+    Delete(sTemp2, 5, length(sTemp2) - 5);
+    aCodeID := sID + trim(sTemp2);
+  end;
 end;
 
 initialization
