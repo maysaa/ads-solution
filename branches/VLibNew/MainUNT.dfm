@@ -4,8 +4,8 @@ object frmMain: TfrmMain
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsDialog
   Caption = 'Main'
-  ClientHeight = 298
-  ClientWidth = 475
+  ClientHeight = 538
+  ClientWidth = 761
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -15,8 +15,8 @@ object frmMain: TfrmMain
   OldCreateOrder = False
   Position = poDesktopCenter
   DesignSize = (
-    475
-    298)
+    761
+    538)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -44,9 +44,9 @@ object frmMain: TfrmMain
   end
   object WB1: TEmbeddedWB
     Left = 0
-    Top = 265
-    Width = 473
-    Height = 31
+    Top = 176
+    Width = 759
+    Height = 360
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 1
     OnNavigateComplete2 = WB1NavigateComplete2
@@ -60,6 +60,8 @@ object frmMain: TfrmMain
       '<HTML></HTML>')
     PrintOptions.Footer = '&u&b&d'
     PrintOptions.Orientation = poPortrait
+    ExplicitWidth = 473
+    ExplicitHeight = 284
     ControlData = {
       4C0000002C4C0000452A00000000000000000000000000000000000000000000
       000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -98,7 +100,7 @@ object frmMain: TfrmMain
     Left = 8
     Top = 62
     Width = 449
-    Height = 219
+    Height = 99
     ScrollBars = ssBoth
     TabOrder = 5
   end

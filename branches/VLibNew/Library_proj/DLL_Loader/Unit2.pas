@@ -67,7 +67,7 @@ var
   resContractorVAT: TContractorVAT;
 begin
     dllHandle := LoadLibrary
-      ('d:\DEV\ADS\trunk\VLib\Library_proj\Win32\Debug\VLib.dll');
+      ('d:\DEV\ADS\branches\VLibNew\Library_proj\Win32\Debug\VLib.dll');
     if dllHandle <> 0 then
     begin
       // @GetInfo := GetProcAddress(dllHandle, 'GetData');
@@ -80,7 +80,7 @@ begin
       // ShowMessage(resContractorVAT.Name);
       if Assigned(GetInfo) then
       begin
-        GetInfo('45609190875', resContractor, resContractorVAT);
+        GetInfo('46008281120', resContractor, resContractorVAT);
         ShowMessage(resContractor.Code);
         ShowMessage(resContractorVAT.Name);
       end
