@@ -30,7 +30,6 @@ object frmMain: TfrmMain
       Height = 316
       Align = alClient
       TabOrder = 0
-      Silent = False
       OnDocumentComplete = WB1DocumentComplete
       DisableCtrlShortcuts = 'N'
       DownloadOptions = [DownloadVideos, DownloadBGSounds]
