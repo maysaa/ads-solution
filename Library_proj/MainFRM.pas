@@ -199,6 +199,10 @@ function TfrmMain.Proceed2(ACode: String): Boolean;
 var
   ATimeout: Integer;
   aElement: IhtmlElement;
+  ElementCollection: IHTMLElementCollection;
+  doc: IHTMLDocument2;
+  i:integer;
+  InputElement: IHTMLInputElement;
 begin
   Result := False;
 
@@ -233,7 +237,7 @@ begin
 
 
 
-  aElement := WB1.ElementByID['class="aui-field-input aui-field-input-choice" id="_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_'];
+  aElement := WB1.ElementByID['_taxespayersportlet_WAR_EskisLiferayPortletsportlet_search_orgcode'];
   if aElement <> nil then
   begin
     aElement.click;
@@ -241,21 +245,42 @@ begin
     WB1.FillFormAndExcecute;
   end;
 
-         ShowMessage('EXIT');
-  EXIT;
-
   aElement := nil;
 
   frmMain.Caption := RSStep8;
   frmMain.PB1.Position := 65;
   Application.ProcessMessages;
-  aElement := WB1.ElementByID['LNGSubmit'];
-  if aElement <> nil then
+
+  doc := WB1.Document as IHTMLDocument2;
+
+  ElementCollection := doc.all;
+  for i := 0 to ElementCollection.length - 1 do
   begin
-    aElement.click;
-  end
-  else
-    EXIT;
+    try
+      aElement := ElementCollection.item(i, '') as IhtmlElement;
+    except
+      continue;
+    end;
+    if UpperCase(aElement.tagName) = 'INPUT' then
+    begin
+      InputElement := aElement as IHTMLInputElement;
+      if UpperCase(InputElement.type_) = 'SUBMIT' then
+      begin
+        aElement.click;
+      end;
+    end;
+  end;
+
+           ShowMessage('EXIT');
+  EXIT;//Isejimas
+
+//  aElement := WB1.ElementByID['LNGSubmit'];
+//  if aElement <> nil then
+//  begin
+//    aElement.click;
+//  end
+//  else
+//    EXIT;
 
   ATimeout := 0;
   while (gloCount < 2) and (ATimeout < 199999999) do
