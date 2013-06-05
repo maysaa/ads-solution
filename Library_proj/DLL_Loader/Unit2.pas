@@ -80,7 +80,7 @@ begin
       // ShowMessage(resContractorVAT.Name);
       if Assigned(GetInfo) then
       begin
-        GetInfo('46008281120', resContractor, resContractorVAT);
+        GetInfo('302521987', resContractor, resContractorVAT);
         ShowMessage(resContractor.Code);
         ShowMessage(resContractorVAT.Name);
       end

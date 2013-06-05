@@ -80,7 +80,7 @@ var
   gloContractorVAT: TContractorVAT;
   gloURL1: String =
     'http://www.vmi.lt/cms/ukininkai-kuriems-taikoma-kompensacinio-pvm-tarifo-schema1';
-  gloURL2: String = 'http://www.vmi.lt/lt/?itemId=1003740';
+  gloURL2: String = 'http://www.vmi.lt/cms/informacija-apie-mokesciu-moketojus';
   gloCount: Integer;
 
 Function GetData(ANumber: WideString; out AContractor: TContractor;
@@ -231,13 +231,18 @@ begin
   frmMain.PB1.Position := 55;
   Application.ProcessMessages;
 
-  aElement := WB1.ElementByID['inpCode'];
+
+
+  aElement := WB1.ElementByID['class="aui-field-input aui-field-input-choice" id="_farmersvatcompensationportlet_WAR_EskisLiferayPortletsportlet_'];
   if aElement <> nil then
   begin
     aElement.click;
-    WB1.FillForm('InputByCode', ACode);
+    WB1.FillForm('_taxespayersportlet_WAR_EskisLiferayPortletsportlet_val_orgcode', ACode);
     WB1.FillFormAndExcecute;
   end;
+
+         ShowMessage('EXIT');
+  EXIT;
 
   aElement := nil;
 
@@ -425,11 +430,6 @@ begin
       end;
 {$ENDREGION}
     end;
-
-    memResult.Lines.Text := trim(AResult);
-
-     ShowMessage('EXIT');
-  EXIT;
 
 
     Proceed2(ACode);
