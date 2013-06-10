@@ -67,6 +67,7 @@ object frmMain: TfrmMain
       Align = alClient
       ScrollBars = ssBoth
       TabOrder = 0
+      ExplicitTop = 1
     end
   end
   object pnlTop: TPanel
