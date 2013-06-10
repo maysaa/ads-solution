@@ -201,7 +201,7 @@ var
   aElement: IhtmlElement;
   ElementCollection: IHTMLElementCollection;
   doc: IHTMLDocument2;
-  i:integer;
+  i: Integer;
   InputElement: IHTMLInputElement;
 begin
   Result := False;
@@ -235,13 +235,14 @@ begin
   frmMain.PB1.Position := 55;
   Application.ProcessMessages;
 
-
-
-  aElement := WB1.ElementByID['_taxespayersportlet_WAR_EskisLiferayPortletsportlet_search_orgcode'];
+  aElement := WB1.ElementByID
+    ['_taxespayersportlet_WAR_EskisLiferayPortletsportlet_search_orgcode'];
   if aElement <> nil then
   begin
     aElement.click;
-    WB1.FillForm('_taxespayersportlet_WAR_EskisLiferayPortletsportlet_val_orgcode', ACode);
+    WB1.FillForm
+      ('_taxespayersportlet_WAR_EskisLiferayPortletsportlet_val_orgcode',
+      ACode);
     WB1.FillFormAndExcecute;
   end;
 
@@ -270,17 +271,6 @@ begin
       end;
     end;
   end;
-
-           ShowMessage('EXIT');
-  EXIT;//Isejimas
-
-//  aElement := WB1.ElementByID['LNGSubmit'];
-//  if aElement <> nil then
-//  begin
-//    aElement.click;
-//  end
-//  else
-//    EXIT;
 
   ATimeout := 0;
   while (gloCount < 2) and (ATimeout < 199999999) do
@@ -336,16 +326,16 @@ begin
     AList.Text := AResult;
     for i := 0 to AList.Count - 1 do
     begin
-      if Trim(AList[i]) = 'Paieškos rezultatai' then
+      if trim(AList[i]) = 'Paieškos rezultatai' then
       begin
-        gloContractor.Name := Trim(AList[i + 4]);
+        gloContractor.Name := trim(AList[i + 4]);
       end;
 
 {$REGION 'FIELDS PARSING'}
       { Kodas: }
       if Pos('Kodas:', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Kodas:', TempString);
         Delete(TempString, 1, 6);
         if TempString <> '' then
@@ -357,7 +347,7 @@ begin
       { Pažym. nr. }
       if Pos('Pažym. nr.', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Pažym. nr.', TempString);
         Delete(TempString, 1, 10);
         if TempString <> '' then
@@ -369,7 +359,7 @@ begin
       { Reg. data }
       if Pos('Reg. data', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Reg. data', TempString);
         Delete(TempString, 1, 9);
         if TempString <> '' then
@@ -381,7 +371,7 @@ begin
       { Data nuo kada taikomas komp. PVM tarifas }
       if Pos('Data nuo kada taikomas komp. PVM tarifas', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Data nuo kada taikomas komp. PVM tarifas',
           TempString);
         Delete(TempString, 1, 40);
@@ -394,7 +384,7 @@ begin
       { Išreg. data }
       if Pos('Išreg. data', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Išreg. data', TempString);
         Delete(TempString, 1, 11);
         if TempString <> '' then
@@ -406,7 +396,7 @@ begin
       { Pažym. negalioja nuo }
       if Pos('Pažym. negalioja nuo', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Pažym. negalioja nuo', TempString);
         Delete(TempString, 1, 20);
         if TempString <> '' then
@@ -419,7 +409,7 @@ begin
       if Pos('Paskelbimo negaliojančiu "VŽ" priede "Informaciniai pranešimai"',
         AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex :=
           Pos('Paskelbimo negaliojančiu "VŽ" priede "Informaciniai pranešimai"',
           TempString);
@@ -433,7 +423,7 @@ begin
       { Išreg. priežastis }
       if Pos('Išreg. priežastis', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Išreg. priežastis', TempString);
         Delete(TempString, 1, 17);
         if TempString <> '' then
@@ -445,7 +435,7 @@ begin
       { Pastabos }
       if Pos('Pastabos', AList[i]) > 0 then
       begin
-        TempString := Trim(AList[i]);
+        TempString := trim(AList[i]);
         TempIndex := Pos('Pastabos', TempString);
         Delete(TempString, 1, 8);
         if TempString <> '' then
@@ -456,6 +446,7 @@ begin
 {$ENDREGION}
     end;
 
+    memResult.Lines.Text := trim(AResult);
 
     Proceed2(ACode);
   finally
@@ -486,12 +477,12 @@ begin
     EXIT;
   end;
 
-  AStart := Pos('Paieškos rezultatai', ASourceText);
+  AStart := Pos('Nurodykite nors vieną paieškos parametrą', ASourceText);
 
   AResult := ASourceText;
   Delete(AResult, 1, AStart - 1);
 
-  AEnd := Pos('Konsultacijos mokesčių klausimais telefonu 1882', AResult);
+  AEnd := Pos('ES valstybių narių PVM mokėtojų kodų tikrinimas', AResult);
   Delete(AResult, AEnd, length(AResult) - AEnd);
 
   frmMain.Caption := RSStep10;
@@ -503,46 +494,38 @@ begin
     AList.Text := AResult;
     for i := 0 to AList.Count - 1 do
     begin
-      if AList[i] = 'Paieškos rezultatai' then
+      if trim(AList[i]) = 'Nurodykite nors vieną paieškos parametrą' then
       begin
         gloContractorVAT.Name := AList[i + 1];
       end;
 {$REGION 'FIELDS PARSING'}
-      { PVM kodas: }
-      if Pos('PVM kodas:', AList[i]) > 0 then
+      { PVM mokėtojo kodas: }
+      if Pos('PVM mokėtojo kodas:', AList[i]) > 0 then
       begin
         TempString := AList[i];
-        TempIndex := Pos('PVM kodas:', TempString);
-        Delete(TempString, 1, 10);
+        TempIndex := Pos('PVM mokėtojo kodas:', TempString);
+        Delete(TempString, 1, 20);
         if TempString <> '' then
           gloContractorVAT.VATCode := trim(TempString)
         else
           gloContractorVAT.VATCode := '';
       end;
 
-      { Įregistravimo PVM mokėtojų data: }
-      if Pos('Įregistravimo PVM mokėtojų data:', AList[i]) > 0 then
+      { PVMM Galioja nuo Galioja iki }
+      if Pos('PVMM Galioja nuo Galioja iki', AList[i]) > 0 then
       begin
-        TempString := AList[i];
-        TempIndex := Pos('Įregistravimo PVM mokėtojų data:', TempString);
-        Delete(TempString, 1, 32);
-        if TempString <> '' then
-          gloContractorVAT.StartDate := trim(TempString)
+        if trim(AList[i + 1]) <> '* - © Juridinių asmenų registras' then
+        begin
+          gloContractorVAT.StartDate := trim(AList[i + 1]);
+          if trim(AList[i + 2]) <> '* - © Juridinių asmenų registras' then
+          begin
+            gloContractorVAT.EndDate := trim(AList[i + 1]);
+          end
+          else
+            gloContractorVAT.EndDate := '';
+        end
         else
           gloContractorVAT.StartDate := '';
-      end;
-
-      { Išregistravimo iš PVM mokėtojų registro data: }
-      if Pos('Išregistravimo iš PVM mokėtojų registro data:', AList[i]) > 0 then
-      begin
-        TempString := AList[i];
-        TempIndex := Pos('Išregistravimo iš PVM mokėtojų registro data:',
-          TempString);
-        Delete(TempString, 1, 45);
-        if TempString <> '' then
-          gloContractorVAT.EndDate := trim(TempString)
-        else
-          gloContractorVAT.EndDate := '';
       end;
 {$ENDREGION}
     end;
