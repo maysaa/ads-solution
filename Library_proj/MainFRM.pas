@@ -559,7 +559,7 @@ begin
   AContractor := gloContractor;
   AContractorVAT := gloContractorVAT;
 
-  frmMain.WindowState := wsMaximized; // SET MAXIMAZE FOR TEST PURPOSE ONLY
+  //frmMain.WindowState := wsMaximized; // SET MAXIMAZE FOR TEST PURPOSE ONLY
   frmMain.Show;
 
   if trim(ANumber) = '' then

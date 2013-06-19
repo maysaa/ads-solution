@@ -3,8 +3,8 @@ object frmMain: TfrmMain
   Top = 0
   BorderIcons = []
   BorderStyle = bsToolWindow
-  ClientHeight = 536
-  ClientWidth = 830
+  ClientHeight = 31
+  ClientWidth = 366
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,16 +18,18 @@ object frmMain: TfrmMain
   object pnlBottom: TPanel
     Left = 0
     Top = 220
-    Width = 830
-    Height = 316
+    Width = 366
+    Height = 20
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 830
+    ExplicitHeight = 316
     object WB1: TEmbeddedWB
       Left = 0
       Top = 0
-      Width = 830
-      Height = 316
+      Width = 366
+      Height = 20
       Align = alClient
       TabOrder = 0
       OnDocumentComplete = WB1DocumentComplete
@@ -54,37 +56,41 @@ object frmMain: TfrmMain
   object pnlCenter: TPanel
     Left = 0
     Top = 30
-    Width = 830
+    Width = 366
     Height = 190
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 830
     object memResult: TMemo
       Left = 0
       Top = 0
-      Width = 830
+      Width = 366
       Height = 190
       Align = alClient
       ScrollBars = ssBoth
       TabOrder = 0
       ExplicitTop = 1
+      ExplicitWidth = 830
     end
   end
   object pnlTop: TPanel
     Left = 0
     Top = 0
-    Width = 830
+    Width = 366
     Height = 30
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 830
     object PB1: TProgressBar
       Left = 0
       Top = 0
-      Width = 830
+      Width = 366
       Height = 30
       Align = alClient
       TabOrder = 0
+      ExplicitWidth = 830
     end
   end
 end
